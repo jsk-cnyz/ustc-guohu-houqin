@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#b91c1c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>国护队后勤部</title>
+<style>
+:root{
+  --red:#b91c1c; --red-dark:#7f1d1d; --gold:#f59e0b;
+  --bg:#f4f4f6; --card:#ffffff; --line:#e8e8ec;
+  --ok:#16a34a; --ok-bg:#e8f7ee;
+  --part:#d97706; --part-bg:#fdf3e3;
+  --bad:#dc2626; --bad-bg:#fdeaea;
+  --unk:#6b7280; --unk-bg:#eef0f3;
+  --txt:#1f2329; --sub:#7a8190;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--txt);font-size:15px;line-height:1.5;padding-bottom:76px}
+header{position:sticky;top:0;z-index:50;background:linear-gradient(135deg,#b91c1c,#7f1d1d);color:#fff;padding:14px 16px 12px;box-shadow:0 2px 8px rgba(127,29,29,.25)}
+header h1{font-size:19px;letter-spacing:1px}
+header p{font-size:12px;opacity:.85;margin-top:2px}
+main{max-width:720px;margin:0 auto;padding:12px 12px 8px}
+.view{display:none}
+.view.on{display:block}
+.card{background:var(--card);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card h3{font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.card h3::before{content:"";width:4px;height:16px;border-radius:2px;background:var(--red);display:inline-block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:var(--card);border-radius:12px;padding:10px 6px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.stat b{display:block;font-size:20px}
+.stat span{font-size:11px;color:var(--sub)}
+.stat.ok b{color:var(--ok)}.stat.part b{color:var(--part)}.stat.bad b{color:var(--bad)}
+.banner{border-radius:14px;padding:14px;color:#fff;margin-bottom:12px;background:linear-gradient(135deg,#b91c1c,#991b1b)}
+.banner .d1{font-size:12px;opacity:.85}
+.banner .d2{font-size:18px;font-weight:700;margin:4px 0}
+.banner .d3{font-size:12px;opacity:.9}
+.tag{display:inline-block;padding:1px 8px;border-radius:20px;font-size:11px;margin-right:4px}
+.t-ok{background:var(--ok-bg);color:var(--ok)}
+.t-part{background:var(--part-bg);color:var(--part)}
+.t-bad{background:var(--bad-bg);color:var(--bad)}
+.t-unk{background:var(--unk-bg);color:var(--unk)}
+.t-cat{background:#fdeaea;color:var(--red)}
+.t-flag{background:#fdeaea;color:var(--red)}
+.row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:10px 2px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:none}
+.row .l{flex:1;min-width:0}
+.row .t1{font-weight:600;font-size:14px}
+.row .t2{font-size:12px;color:var(--sub);margin-top:2px;word-break:break-all}
+.row .r{text-align:right;flex-shrink:0}
+button{font-family:inherit;border:none;cursor:pointer}
+.btn{background:var(--red);color:#fff;border-radius:10px;padding:9px 16px;font-size:14px}
+.btn.sec{background:#fff;color:var(--red);border:1px solid var(--red)}
+.btn.sm{padding:5px 12px;font-size:12px;border-radius:8px}
+.btn.gray{background:#e5e7eb;color:#374151}
+.btn.blk{width:100%;padding:12px;font-size:15px}
+input,select,textarea{font-family:inherit;width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:14px;background:#fafafa;margin-top:4px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--red)}
+label{display:block;font-size:12px;color:var(--sub);margin-top:8px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;background:#fff;border:1px solid var(--line);border-radius:20px;padding:6px 14px;font-size:13px;color:#444}
+.tab.on{background:var(--red);color:#fff;border-color:var(--red)}
+.chipbar{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none}
+.chipbar::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:4px 12px;border-radius:20px;font-size:12px;background:#fff;border:1px solid var(--line);color:#555}
+.chip.on{background:var(--red);color:#fff;border-color:var(--red)}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:60;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;padding:8px 0 7px;font-size:11px;color:var(--sub);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button .ic{font-size:20px;line-height:1}
+nav button.on{color:var(--red);font-weight:600}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.on{display:flex}
+.modal{background:#fff;width:100%;max-width:520px;border-radius:18px 18px 0 0;padding:18px 16px 26px;max-height:88vh;overflow-y:auto}
+.modal h3{margin-bottom:6px}
+.empty{text-align:center;color:var(--sub);font-size:13px;padding:26px 0}
+.note{font-size:12px;color:var(--sub);line-height:1.7}
+.hint{background:#fff7e6;border:1px solid #fde3b0;color:#92600a;border-radius:10px;padding:8px 10px;font-size:12px;margin-bottom:10px}
+.cal-item{border-left:3px solid var(--line);padding:8px 0 8px 12px;margin-left:4px}
+.cal-item.past{opacity:.5}
+.cal-item.next{border-left-color:var(--red)}
+.cal-item .cd{font-weight:700}
+.cal-item .badge{font-size:10px;background:var(--red);color:#fff;border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+.del{color:#bbb;font-size:16px;padding:2px 8px}
+.sec-h{font-size:13px;color:var(--sub);margin:14px 4px 8px;font-weight:600}
+.pick{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--line)}
+.pick:last-child{border-bottom:none}
+.pick .cb{width:22px;height:22px;flex-shrink:0;accent-color:var(--red)}
+.pick .nm{flex:1;min-width:0;font-size:14px}
+.pick .st{flex-shrink:0}
+.pick input.qty{width:64px;margin-top:0;padding:5px 8px;text-align:center;border-radius:8px}
+.picks{max-height:340px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;padding:4px 10px;background:#fff}
+.lock{margin-top:18px;text-align:center}
+.lock a{color:var(--sub);font-size:12px;text-decoration:underline;cursor:pointer}
+.t-out{background:#ede9fe;color:#7c3aed}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="hTitle">🚩 国护队 · 后勤部</h1>
+  <p id="headDate"></p>
+  <p id="syncStat" style="font-size:11px;opacity:.85;margin-top:2px"></p>
+</header>
+<main>
+
+<!-- ================= 队员：登录 ================= -->
+<section class="view" id="v-login">
+  <div class="banner">
+    <div class="d1">国护队 · 后勤部</div>
+    <div class="d2">请先登记您的姓名</div>
+    <div class="d3">用于借用登记与记录核对，登录后可看到自己的全部记录</div>
+  </div>
+  <div id="loginBox"></div>
+  <div class="lock"><a onclick="joinSyncPrompt()">☁️ 加入云同步（管理员给了同步码请点这里）</a></div>
+  <div class="lock"><a onclick="openLock()">🔐 管理入口</a> · <a onclick="switchMe()">🔄 切换身份</a> · <a onclick="joinSyncPrompt()">☁️ 云同步</a></div>
+</section>
+
+<!-- ================= 队员：借物资 ================= -->
+<section class="view" id="v-mborrow">
+  <div class="banner" style="background:linear-gradient(135deg,#b91c1c,#991b1b)">
+    <div class="d1">借用物资</div>
+    <div class="d2">可跨分类勾选：队服、鞋子、帽子、装备等一起选</div>
+    <div class="d3">选好后填一次信息即可全部登记；归还时在「我的登记」一键全部归还</div>
+  </div>
+  <div class="card">
+    <h3>1️⃣ 选择分类</h3>
+    <div class="chipbar" id="mCatBar" style="padding-bottom:4px"></div>
+  </div>
+  <div class="card">
+    <h3>2️⃣ 挑选物品 <span id="mCatName" style="font-weight:400;color:var(--sub);font-size:12px"></span></h3>
+    <div class="picks" id="mPickList"></div>
+    <div id="selSummary" class="note" style="margin-top:8px"></div>
+  </div>
+  <div class="card">
+    <h3>3️⃣ 填写信息</h3>
+    <label>借用人 *</label><input id="bName" placeholder="姓名">
+    <label>联系方式</label><input id="bTel" placeholder="电话 / 微信">
+    <label>活动名称</label><input id="bAct" placeholder="如：校运动会升旗">
+    <label>备注</label><input id="bNote" placeholder="选填">
+    <div style="margin-top:12px"><button class="btn blk" onclick="addBorrow()">提交借用登记</button></div>
+  </div>
+  <div class="lock"><a onclick="openLock()">🔐 管理入口</a> · <a onclick="switchMe()">🔄 切换身份</a> · <a onclick="joinSyncPrompt()">☁️ 云同步</a></div>
+</section>
+
+<!-- ================= 队员：我的登记 ================= -->
+<section class="view" id="v-mmine">
+  <div class="card">
+    <h3>我的借用登记</h3>
+    <div id="mineList"></div>
+  </div>
+  <div class="card">
+    <h3>🔧 物资报修上报</h3>
+    <div class="chipbar" id="repCatBar" style="padding-bottom:4px"></div>
+    <div class="picks" id="repPickList" style="max-height:300px"></div>
+    <div id="repSummary" class="note" style="margin-top:8px"></div>
+    <div id="repOtherBox" style="display:none">
+      <label>报修物品名称 *</label><input id="rItem" placeholder="如：仓库门锁、试衣镜（非库存物资）">
+    </div>
+    <label>问题描述 *</label><textarea id="rDesc" rows="2" placeholder="如：扣子掉了、肩章缺失…（对本次所选全部物品生效）"></textarea>
+    <label>上报人</label><input id="rBy" placeholder="姓名">
+    <div style="margin-top:10px"><button class="btn blk" onclick="addRepair()">提交上报</button></div>
+    <div id="myRepairs" style="margin-top:8px"></div>
+  </div>
+  <div class="card">
+    <button class="btn sec blk" onclick="copyReport()">📤 复制上报文本（发给后勤管理员）</button>
+  </div>
+  <div class="lock"><a onclick="openLock()">🔐 管理入口</a> · <a onclick="switchMe()">🔄 切换身份</a> · <a onclick="joinSyncPrompt()">☁️ 云同步</a></div>
+</section>
+
+<!-- ================= 管理员：首页 ================= -->
+<section class="view" id="v-home">
+  <div class="banner" id="nextBanner"></div>
+  <div class="card">
+    <h3>物资总览</h3>
+    <div class="grid4" id="homeStats"></div>
+  </div>
+  <div class="card">
+    <h3>最近动态</h3>
+    <div id="homeFeed"></div>
+  </div>
+  <div class="card">
+    <h3>快捷入口</h3>
+    <div class="grid2">
+      <button class="btn" onclick="go('v-rec')">📋 借还登记管理</button>
+      <button class="btn sec" onclick="go('v-inv')">📦 物资管理</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 管理员：换旗日历 ================= -->
+<section class="view" id="v-cal">
+  <div class="tabs" id="termTabs"></div>
+  <div id="calList"></div>
+  <div class="card">
+    <h3>➕ 添加换旗安排</h3>
+    <label>日期</label><input type="date" id="addD">
+    <div class="grid4">
+      <div><label>国旗(面)</label><input type="number" id="addF" value="1" min="0"></div>
+      <div><label>院旗(面)</label><input type="number" id="addY" value="1" min="0"></div>
+      <div><label>校旗(面)</label><input type="number" id="addS" value="1" min="0"></div>
+      <div><label>执行人</label><input id="addW" placeholder="东操/郭广"></div>
+    </div>
+    <label>原因 / 备注</label><input id="addN" placeholder="如：东区换旗">
+    <div style="margin-top:12px"><button class="btn blk" onclick="addEntry()">添加</button></div>
+  </div>
+</section>
+
+<!-- ================= 管理员：物资 ================= -->
+<section class="view" id="v-inv">
+  <div class="tabs" id="invTabs"></div>
+  <div id="uniFilterBar">
+    <input placeholder="🔍 搜索编号 / 尺码 / 状态" id="uniSearch" oninput="renderInv()">
+    <div class="chipbar" style="margin-top:8px" id="uniChips">
+      <button class="chip on" data-f="all" onclick="setUniFilter('all')">全部</button>
+      <button class="chip" data-f="ok" onclick="setUniFilter('ok')">完好</button>
+      <button class="chip" data-f="partial" onclick="setUniFilter('partial')">缺配件</button>
+      <button class="chip" data-f="broken" onclick="setUniFilter('broken')">损坏</button>
+      <button class="chip" data-f="unknown" onclick="setUniFilter('unknown')">待登记</button>
+    </div>
+  </div>
+  <div id="invList"></div>
+  <p class="note" style="padding:4px 6px">💡 点任意物资卡片可以修改它的存放位置和状态。</p>
+</section>
+
+<!-- ================= 管理员：借还登记管理 ================= -->
+<section class="view" id="v-rec">
+  <div class="card" style="display:flex;gap:8px;align-items:center;padding:10px 14px">
+    <div style="flex:1"><b>借还登记管理</b><span id="recCount" style="color:var(--sub);font-size:12px;margin-left:6px"></span></div>
+    <button class="btn sm" onclick="editRec(null)">➕ 代登记</button>
+  </div>
+  <div class="chipbar" id="recChips"></div>
+  <div class="card" id="recList"></div>
+  <div class="sec-h">报修上报记录</div>
+  <div class="card" id="admRepairs"></div>
+</section>
+
+<!-- ================= 管理员：报修处理 ================= -->
+<section class="view" id="v-rep">
+  <div class="card" style="display:flex;gap:8px;align-items:center;padding:10px 14px">
+    <div style="flex:1"><b>🔧 报修处理</b><span id="repCount" style="color:var(--sub);font-size:12px;margin-left:6px"></span></div>
+  </div>
+  <div id="repList"></div>
+</section>
+
+<!-- ================= 管理员：数据 ================= -->
+<section class="view" id="v-data">
+  <div class="hint">📌 开启云同步后，所有人的登记和修改会自动实时同步，无需再手动导出/上报。未开启时仍可用上报文本 + 备份文件的方式同步。</div>
+  <div class="card">
+    <h3>☁️ 云同步（多设备实时共享）</h3>
+    <div id="syncInfo" class="note"></div>
+    <div class="grid2" style="margin-top:10px" id="syncBtns"></div>
+  </div>
+  <div class="card">
+    <h3>👥 队员名单（登录核对用）</h3>
+    <div style="display:flex;gap:8px"><input id="roName" placeholder="输入姓名后点添加"><button class="btn" style="flex-shrink:0" onclick="addRoster()">添加</button></div>
+    <div id="rosterList" style="margin-top:6px"></div>
+    <p class="note" style="margin-top:6px">名单用于队员登录时的身份核对；开启云同步后名单也会自动同步到所有设备。</p>
+  </div>
+  <div class="card">
+    <h3>数据同步</h3>
+    <div class="grid2">
+      <button class="btn" onclick="exportJson()">⬇️ 导出备份文件</button>
+      <button class="btn sec" onclick="document.getElementById('impFile').click()">⬆️ 导入备份合并</button>
+    </div>
+    <input type="file" id="impFile" accept=".json,application/json" style="display:none" onchange="importJson(this)">
+    <div class="grid2" style="margin-top:10px">
+      <button class="btn sec" onclick="copyReport()">📤 生成上报文本</button>
+      <button class="btn gray" onclick="resetAll()">恢复初始数据</button>
+    </div>
+  </div>
+  <div class="card">
+    <h3>🔐 管理设置</h3>
+    <div class="grid2">
+      <button class="btn sec" onclick="changePass()">修改管理密码</button>
+      <button class="btn gray" onclick="logout()">退出管理模式</button>
+    </div>
+  </div>
+  <div class="card">
+    <h3>📖 使用说明</h3>
+    <p class="note">
+      <b>普通队员</b>：只能使用「借物资」「我的登记」两个页面，借用时按分类挑选物品，不需要填归还时间；归还时在自己的登记里点「归还」，自动记录归还日期。<br><br>
+      <b>后勤部成员</b>：在队员页底部点「后勤部成员管理入口」，输入管理密码（初始 <b>123456</b>，可在数据页修改）解锁，可查看并修改全部借还登记、管理物资状态和存放位置、维护换旗日历。<br><br>
+      <b>借出联动</b>：有人借用后，对应物资在选物页和管理端物资页都会实时显示紫色「借出」标记，可借数量随之减少；点「归还」后自动恢复。
+      <b>物资越来越多怎么办？</b>管理端在「物资」页点「🗂️ 门类」可以新增门类（如手套、领带、旗子），再在每个门类里「➕ 添加物品」；新门类会自动出现在队员的借物页，借出联动同样生效。<br><br>
+      <b>人员核对</b>：队员首次打开需登记姓名（管理员可在「数据 → 队员名单」预置名单），之后借用自动带出姓名，「我的登记」只显示自己的记录，可随时在页面底部「切换身份」。<br><br>
+      <b>☁️ 多设备实时同步</b>：管理员在「数据 → 云同步」设置一次 LeanCloud 或 Supabase 免费后端，生成「同步码」发到群里；每人粘贴一次即可。此后任何登记/修改约 2 秒内自动同步到所有设备，无需再手动上报。<br><br>
+      <b>怎么发给大家？</b>把这个 html 文件发到微信群 / QQ 群，手机点击后用浏览器打开；iPhone 用 Safari 打开后「分享 → 添加到主屏幕」就像一个 App。
+    </p>
+  </div>
+  <p class="note" style="text-align:center;padding:6px 0 16px">国护队后勤部 · 内部使用</p>
+</section>
+
+</main>
+
+<nav id="navBar"></nav>
+
+<div class="modal-bg" id="mBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="mBox"></div>
+</div>
+
+<script>
+/* ================= 初始数据（整理自后勤部 Excel） ================= */
+var SEED = {
+terms:[
+ {id:"t25a",name:"25秋期",entries:[
+  {id:"t25a-0",d:"2025-08-29",f:1,y:1,s:1,w:"郭广",why:"新生升旗",note:""},
+  {id:"t25a-1",d:"2025-09-02",f:1,y:0,s:0,w:"郭广",why:"上一面坏了",note:""},
+  {id:"t25a-2",d:"2025-09-13",f:1,y:1,s:1,w:"东操",why:"东操升旗",note:""},
+  {id:"t25a-3",d:"2025-09-20",f:1,y:1,s:1,w:"郭广",why:"东区换旗",note:""},
+  {id:"t25a-4",d:"2025-09-27",f:1,y:1,s:1,w:"东操",why:"东区换旗",note:""},
+  {id:"t25a-5",d:"2025-10-05",f:1,y:1,s:1,w:"郭广",why:"东区换旗",note:""},
+  {id:"t25a-6",d:"2025-10-11",f:1,y:1,s:1,w:"东操",why:"东操换旗",note:""},
+  {id:"t25a-7",d:"2025-10-19",f:1,y:1,s:1,w:"郭广",why:"郭广换旗",note:""},
+  {id:"t25a-8",d:"2025-10-25",f:1,y:1,s:1,w:"东操",why:"东操换旗",note:""},
+  {id:"t25a-9",d:"2025-11-02",f:1,y:1,s:1,w:"郭广",why:"郭广换旗",note:""},
+  {id:"t25a-10",d:"2025-11-08",f:1,y:1,s:1,w:"东操",why:"东操换旗",note:""},
+  {id:"t25a-11",d:"2025-11-16",f:1,y:1,s:1,w:"郭广",why:"郭广换旗",note:""},
+  {id:"t25a-12",d:"2025-11-22",f:1,y:1,s:1,w:"东操",why:"东操换旗",note:""},
+  {id:"t25a-13",d:"2025-11-30",f:1,y:1,s:1,w:"郭广",why:"郭广换旗",note:""},
+  {id:"t25a-14",d:"2025-12-06",f:1,y:1,s:1,w:"东操",why:"东操换旗",note:""},
+  {id:"t25a-15",d:"2025-12-14",f:1,y:1,s:1,w:"郭广",why:"郭广换旗",note:""},
+  {id:"t25a-16",d:"2025-12-20",f:1,y:1,s:1,w:"东操",why:"东操换旗",note:"原表日期序列号有误，日期待核实"},
+  {id:"t25a-17",d:"2025-12-28",f:1,y:1,s:1,w:"郭广",why:"郭广换旗",note:"元旦借了，不知道放哪里了；原表日期待核实"},
+  {id:"t25a-18",d:"2026-01-03",f:1,y:1,s:1,w:"东操",why:"东操换旗",note:""},
+  {id:"t25a-19",d:"2026-01-10",f:1,y:1,s:1,w:"郭广",why:"郭广换旗",note:"两周"},
+  {id:"t25a-20",d:"2026-01-10",f:1,y:1,s:1,w:"东操",why:"东操换旗",note:"一周"}
+ ]},
+ {id:"t26s",name:"26春期",entries:[
+  {id:"t26s-0",d:"2026-03-01",f:2,y:2,s:2,w:"东操和郭广换旗",why:"",note:""},
+  {id:"t26s-1",d:"2026-03-13",f:1,y:1,s:1,w:"东操",why:"",note:""},
+  {id:"t26s-2",d:"2026-03-14",f:1,y:1,s:1,w:"郭广",why:"",note:""},
+  {id:"t26s-3",d:"2026-03-27",f:1,y:1,s:1,w:"东操",why:"",note:""},
+  {id:"t26s-4",d:"2026-03-28",f:1,y:1,s:1,w:"郭广",why:"",note:""},
+  {id:"t26s-5",d:"2026-04-09",f:1,y:1,s:1,w:"东操",why:"",note:""},
+  {id:"t26s-6",d:"2026-04-11",f:1,y:1,s:1,w:"郭广",why:"",note:""},
+  {id:"t26s-7",d:"2026-04-24",f:1,y:1,s:1,w:"东操",why:"",note:""},
+  {id:"t26s-8",d:"2026-04-25",f:1,y:1,s:1,w:"郭广",why:"",note:""},
+  {id:"t26s-9",d:"2026-05-08",f:1,y:1,s:1,w:"东操",why:"",note:""},
+  {id:"t26s-10",d:"2026-05-09",f:1,y:1,s:1,w:"郭广",why:"",note:""},
+  {id:"t26s-11",d:"2026-05-22",f:1,y:1,s:1,w:"东操",why:"",note:""},
+  {id:"t26s-12",d:"2026-05-23",f:1,y:1,s:1,w:"郭广",why:"",note:""}
+ ]}
+],
+uniforms:[
+ ["1","女","160","新","好"],["2","女","160","新","无肩章"],["3","女","160","新","无肩章"],
+ ["4","女","","",""],["5","女","","",""],["6","女","","",""],["7","女","","",""],
+ ["8","女","165","新","无问题"],["9","女","","",""],["10","女","","",""],["11","女","","",""],
+ ["12","女","","",""],["13","女","","",""],["14","女","","",""],
+ ["15","男","180","旧","好"],["16","男","165","旧","扣子掉了，肩章、穗在兜里"],["17","男","170","旧","好"],
+ ["18","男","170","旧","扣子、肩章"],["19","男","170","旧","好"],["20","男","170","旧","好"],
+ ["21","男","","",""],["22","男","","",""],["23","男","","",""],["24","男","","",""],["25","男","","",""],
+ ["26","男","175","旧","无肩章"],["27","男","","",""],["28","男","","",""],["29","男","","",""],
+ ["30","男","","",""],["31","男","","",""],["32","男","","",""],["33","男","","",""],
+ ["34A","男","180","旧","扣子坏、肩章"],["35","男","180","旧","好"],["35A","男","180","新","少肩章"],
+ ["36","男","180","旧","好"],["36A","男","180","新","少肩章"],["37","男","","",""],["38","男","180","旧","好"],
+ ["39","男","180","旧","少肩章"],["40","男","180","旧","少肩章"],["41","男","180","旧","少肩章"],
+ ["42","男","180","旧","好"],["43","男","","",""],["43B","男","185","旧","好"],["44","男","","",""],
+ ["45","男","185","旧","扣子、肩章、袋子坏了"],["45A","男","185","新","无肩章"],["46","男","185","旧","好"],
+ ["46A","男","180","新","无肩章"],["47","男","185","旧","好"],["47A","男","185","新","无肩章"],
+ ["48","男","185","旧","扣子、肩章"],["49","男","","",""],["50","男","","",""],["51","男","","",""],
+ ["52","男","185","旧","好"],["53","男","","",""],["54","男","185","旧","好"],["55","男","185","旧","扣子坏"],
+ ["56","男","185","旧","扣子坏"],["57","男","","",""],["58","男","190","旧","没裤子"],["59","男","190","旧","袋子坏"],
+ ["60","男","","",""]
+].map(function(r,i){return {id:r[0],g:r[1],size:r[2],cond:r[3],st:r[4]}}),
+shoes:{ "男":[["255",4],["260",18],["265",10],["270",6],["275",4],["280",1],["旧款",5]],
+        "女":[["230",1],["235",2],["240",3],["245",1],["250",4],["255",3]] },
+hats:{ "男":[["56",1],["57",13],["28",20],["29",6]],
+       "女":[["55",4,"缺少帽徽"],["56",6],["57",2],["58",0],["59",1]] },
+gear:[["武装带",33],["礼宾枪（新）",8],["礼宾枪（老款）",5],["礼宾刀",6]],
+loc:"后勤部仓库（可点卡片修改）"
+};
+
+/* ================= 本地存储 ================= */
+var KEY="ghd_hq_v1";
+/* 内置默认云端（Supabase 公开钥匙，可随文件分发；换后端时在「数据→云同步」里改） */
+var DEF_SYNC={p:"supa",u:"https://vhkbzjtanydjhqprtpug.supabase.co",a:"sb_publishable_LnI03P4ZRHHxnHwMXHfjXw_7rI2MCQl",k:"sb_publishable_LnI03P4ZRHHxnHwMXHfjXw_7rI2MCQl",o:"main"};
+var DEF={uniEdits:{},shoeEdits:{},hatEdits:{},gearEdits:{},borrows:[],repairs:[],calAdded:{},calRemoved:[],curTerm:"t25a",pass:"123456",customCats:[],customItems:[],customUnis:[],delUnis:[],roster:[],delBorrows:[],delRepairs:[],delItems:[],delCats:[]};
+var D=load();
+if(!D.pass||D.pass=="1234")D.pass="123456";
+var ADMIN=sessionStorage.getItem("ghd_admin")=="1";
+function load(){try{var s=localStorage.getItem(KEY);if(s){var o=JSON.parse(s);for(var k in DEF)if(o[k]===undefined)o[k]=DEF[k];return o}}catch(e){}return JSON.parse(JSON.stringify(DEF))}
+function save(quiet){localStorage.setItem(KEY,JSON.stringify(D));if(!quiet)scheduleSync()}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+
+/* ================= 工具 ================= */
+function uniCls(st){if(!st)return"unknown";if(st=="好"||/无问题|完好/.test(st))return"ok";if(/坏|没|破/.test(st))return"broken";if(/少|无|缺|掉|肩章|扣子|兜|袋子/.test(st))return"partial";return"partial"}
+var CLS={ok:["t-ok","完好"],partial:["t-part","缺配件"],broken:["t-bad","损坏"],unknown:["t-unk","待登记"]};
+function tagHtml(c){var t=CLS[c];return '<span class="tag '+t[0]+'">'+t[1]+"</span>"}
+function uniSt(u){var e=D.uniEdits[u.id];return e&&e.st?e.st:u.st}
+function uniNote(u){var e=D.uniEdits[u.id];return e&&e.note?e.note:""}
+function uniLoc(u){var e=D.uniEdits[u.id];return e&&e.loc?e.loc:SEED.loc}
+/* 全部队服 = 初始清单（去掉已删除的）+ 后来添加的 */
+function allUnis(){
+ var all=SEED.uniforms.concat(D.customUnis||[]);
+ return all.filter(function(u){return D.delUnis.indexOf(u.id)<0});
+}
+/* 当前借出统计：从未归还的借用记录里汇总 */
+function outMap(){
+ var m={uni:{},shoe:{},hat:{},gear:{},custom:{}};
+ D.borrows.forEach(function(b){
+  if(b.ret)return;
+  if(b.refs){b.refs.forEach(function(r){
+   if(r.t=="uni")m.uni[r.id]=(m.uni[r.id]||0)+r.n;
+   else if(r.t=="shoe")m.shoe[r.sex+"-"+r.model]=(m.shoe[r.sex+"-"+r.model]||0)+r.n;
+   else if(r.t=="hat")m.hat[r.sex+"-"+r.model]=(m.hat[r.sex+"-"+r.model]||0)+r.n;
+   else if(r.t=="custom")m.custom[r.itemId]=(m.custom[r.itemId]||0)+r.n;
+   else m.gear[r.name]=(m.gear[r.name]||0)+r.n;
+  });return;}
+  var s=b.items||"",mm;
+  var re=/队服\s*#([0-9A-Za-z]+)/g;while((mm=re.exec(s)))m.uni[mm[1]]=(m.uni[mm[1]]||0)+1;
+  SEED.gear.forEach(function(g){var m2=new RegExp(g[0]+"\\s*×\\s*(\\d+)").exec(s);if(m2)m.gear[g[0]]=(m.gear[g[0]]||0)+ +m2[1]});
+ });
+ return m;
+}
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function fmtD(s){if(!s)return"";var m=s.slice(5,7),d=s.slice(8,10);return parseInt(m)+"月"+parseInt(d)+"日"}
+function weekD(s){var w="日一二三四五六";return "周"+w[new Date(s+"T00:00:00").getDay()]}
+function today(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+
+/* ================= 导航 ================= */
+var NAVS={
+ member:[["v-mborrow","🎒","借物资"],["v-mmine","👤","我的登记"],["LOCK","🔐","管理入口"]],
+ admin:[["v-home","🏠","首页"],["v-cal","🗓️","换旗"],["v-inv","📦","物资"],["v-rec","📋","登记"],["v-rep","🔧","报修"],["v-data","⚙️","数据"]]
+};
+function renderNav(){
+ var items=ADMIN?NAVS.admin:NAVS.member;
+ document.getElementById("navBar").innerHTML=items.map(function(it){
+  return '<button data-v="'+it[0]+'" onclick="'+(it[0]=="LOCK"?"openLock()":"go('"+it[0]+"')")+'"><span class="ic">'+it[1]+"</span>"+it[2]+"</button>";
+ }).join("");
+ document.getElementById("hTitle").textContent=ADMIN?"🚩 国护队 · 后勤部（管理中）":"🚩 国护队 · 后勤部";
+}
+var curView="v-login";
+function go(v){
+ if(!ADMIN&&(v=="v-mborrow"||v=="v-mmine")&&!getMe())v="v-login";
+ curView=v;
+ document.querySelectorAll(".view").forEach(function(x){x.classList.remove("on")});
+ document.getElementById(v).classList.add("on");
+ document.querySelectorAll("nav button").forEach(function(b){b.classList.toggle("on",b.dataset.v==v)});
+ window.scrollTo(0,0);
+ if(v=="v-home")renderHome();if(v=="v-cal")renderCal();if(v=="v-inv")renderInv();
+ if(v=="v-rec")renderRec();if(v=="v-mmine")renderMine();
+ if(v=="v-mborrow"){var bn=document.getElementById("bName");if(getMe()){bn.value=getMe();bn.readOnly=true}renderPick()}
+ if(v=="v-mmine"){var rb=document.getElementById("rBy");if(getMe()&&!rb.value)rb.value=getMe();renderMine();renderRepPick()}
+ if(v=="v-login")renderLogin();
+ if(v=="v-rep")renderRep();
+ if(v=="v-data"){renderSyncInfo();renderRoster()}
+}
+function refreshView(){go(curView)}
+function openLock(){
+ if(ADMIN){go("v-data");return}
+ openModal('<h3>🔐 后勤部管理入口</h3><p class="note">请输入后勤部管理密码</p><input type="password" id="pwIn" placeholder="管理密码"><div class="grid2" style="margin-top:14px"><button class="btn gray" onclick="closeModal()">取消</button><button class="btn" onclick="tryLock()">进入管理</button></div>');
+ setTimeout(function(){var i=document.getElementById("pwIn");if(i)i.focus()},50);
+}
+function tryLock(){
+ var v=document.getElementById("pwIn").value;
+ if(v===D.pass){ADMIN=true;sessionStorage.setItem("ghd_admin","1");closeModal();renderNav();go("v-home")}
+ else alert("密码不对哦");
+}
+function logout(){ADMIN=false;sessionStorage.removeItem("ghd_admin");renderNav();go("v-mborrow")}
+function changePass(){
+ var v=prompt("请输入新的管理密码（4位以上）");
+ if(!v)return;if(v.length<4){alert("密码太短");return}
+ D.pass=v;save();alert("密码已修改 ✅");
+}
+
+/* ================= 弹窗 ================= */
+function openModal(html){document.getElementById("mBox").innerHTML=html;document.getElementById("mBg").classList.add("on")}
+function closeModal(){document.getElementById("mBg").classList.remove("on")}
+
+/* ================= 队员：借物资 ================= */
+var mCat="队服",sel={};
+function allCats(){return ["队服","鞋子","帽子","装备"].concat(D.customCats||[])}
+function catIcon(c){return c=="队服"?"👕 ":c=="鞋子"?"👟 ":c=="帽子"?"🧢 ":c=="装备"?"🎖️ ":""}
+function renderCats(){
+ var mb="",it="";
+ allCats().forEach(function(c){
+  mb+='<button class="chip'+(mCat==c?" on":"")+'" data-c="'+esc(c)+'" onclick="setMCat(\''+c+'\')">'+catIcon(c)+esc(c)+"</button>";
+  it+='<button class="tab'+(invCat==c?" on":"")+'" data-c="'+esc(c)+'" onclick="setInvCat(\''+c+'\')">'+catIcon(c)+esc(c)+"</button>";
+ });
+ document.getElementById("mCatBar").innerHTML=mb;
+ document.getElementById("invTabs").innerHTML=it+'<button class="tab" onclick="openCatMgr()">🗂️ 门类</button>';
+}
+function setMCat(c){
+ mCat=c;
+ document.querySelectorAll("#mCatBar .chip").forEach(function(x){x.classList.toggle("on",x.dataset.c==c)});
+ renderPick();
+}
+function shoeHatData(cat){return cat=="鞋子"?SEED.shoes:SEED.hats}
+function shoeHatCount(cat,sex,model){
+ var edits=cat=="鞋子"?D.shoeEdits:D.hatEdits,e=edits[sex+"-"+model]||{};
+ var rows=shoeHatData(cat)[sex];var row=null;
+ for(var i=0;i<rows.length;i++)if(String(rows[i][0])==String(model))row=rows[i];
+ return e.count!=null?e.count:(row?row[1]:0);
+}
+function renderPick(){
+ if(allCats().indexOf(mCat)<0)mCat="队服";
+ renderCats();
+ document.getElementById("mCatName").textContent="（"+mCat+"）";
+ var html="",k,OM=outMap();
+ if(mCat=="队服"){
+  allUnis().forEach(function(u){
+   k="u-"+u.id;var c=uniCls(uniSt(u)),o=OM.uni[u.id]||0,bk=(D.uniEdits[u.id]||{}).brk||0;
+   html+='<div class="pick"><input type="checkbox" class="cb" id="pk-'+k+'" '+(sel[k]?"checked":"")+((o||bk)?" disabled":"")+' onchange="toggleSel(\''+k+'\')">'+
+   '<div class="nm"'+((o||bk)?' style="color:#aaa"':"")+'>#'+u.id+"　"+u.g+"士 "+esc(u.size||"尺码未登记")+(u.cond?"（"+u.cond+"）":"")+'</div><div class="st">'+(o?'<span class="tag t-out">借出</span>':"")+(bk?'<span class="tag t-bad">损坏'+bk+'</span>':"")+tagHtml(c)+"</div></div>";
+  });
+ }else if(mCat=="鞋子"||mCat=="帽子"){
+  var data=shoeHatData(mCat),OMK=mCat=="鞋子"?OM.shoe:OM.hat;
+  ["男","女"].forEach(function(sex){
+   html+='<div class="sec-h" style="margin:6px 0 2px">'+sex+"士</div>";
+   data[sex].forEach(function(row){
+    k=sex+"-"+row[0];
+    var eds=(mCat=="鞋子"?D.shoeEdits:D.hatEdits)[k]||{},bk=eds.brk||0;
+    var note=row[2]?"（"+row[2]+"）":"",cnt=shoeHatCount(mCat,sex,row[0]),o=OMK[k]||0,avail=Math.max(0,cnt-o-bk);
+    html+='<div class="pick"><div class="nm">'+(row[0]=="旧款"?"旧款":row[0]+" 号")+note+'<span style="color:var(--sub);font-size:12px">　可借 '+avail+"</span>"+(o?'<span class="tag t-out">借出 '+o+"</span>":"")+(bk?'<span class="tag t-bad" title="'+esc(eds.brkNote||"")+'">损坏 '+bk+"</span>":"")+"</div>"+
+    '<input type="number" class="qty" min="0" max="'+avail+'" value="'+(sel[k]||0)+'" oninput="setQty(\''+k+'\',this.value)"></div>';
+   });
+  });
+ }else if(mCat=="装备"){
+  SEED.gear.forEach(function(g){
+   var e=D.gearEdits[g[0]]||{},cnt=e.count!=null?e.count:g[1],o=OM.gear[g[0]]||0,avail=Math.max(0,cnt-o-(e.brk||0));k="g-"+g[0];
+   html+='<div class="pick"><div class="nm">'+g[0]+'<span style="color:var(--sub);font-size:12px">　可借 '+avail+"</span>"+(o?'<span class="tag t-out">借出 '+o+"</span>":"")+(e.brk?'<span class="tag t-bad" title="'+esc(e.brkNote||"")+'">损坏 '+e.brk+"</span>":"")+"</div>"+
+   '<input type="number" class="qty" min="0" max="'+avail+'" value="'+(sel[k]||0)+'" oninput="setQty(\''+k+'\',this.value)"></div>';
+  });
+ }else{
+  var cis=D.customItems.filter(function(x){return x.cat==mCat});
+  html=cis.length?cis.map(function(x){
+   var o=OM.custom[x.id]||0,avail=Math.max(0,x.count-o-(x.brk||0));k="c-"+x.id;
+   return '<div class="pick"><div class="nm">'+esc(x.name)+(x.note?'<span style="color:var(--sub);font-size:12px">　'+esc(x.note)+"</span>":"")+'<span style="color:var(--sub);font-size:12px">　可借 '+avail+"</span>"+(o?'<span class="tag t-out">借出 '+o+"</span>":"")+(x.brk?'<span class="tag t-bad" title="'+esc(x.brkNote||"")+'">损坏 '+x.brk+"</span>":"")+"</div>"+
+   '<input type="number" class="qty" min="0" max="'+avail+'" value="'+(sel[k]||0)+'" oninput="setQty(\''+k+'\',this.value)"></div>';
+  }).join(""):'<div class="empty">该门类下还没有物品，请联系后勤管理员添加</div>';
+ }
+ document.getElementById("mPickList").innerHTML=html;
+ renderSelSummary();
+}
+function toggleSel(k){sel[k]=document.getElementById("pk-"+k).checked?1:0;renderSelSummary()}
+function setQty(k,v){var n=parseInt(v);sel[k]=(n>0?n:0);renderSelSummary()}
+function renderSelSummary(){
+ var el=document.getElementById("selSummary");if(!el)return;
+ var built=buildItems();
+ el.innerHTML=built.text?("<b>✅ 已选 "+built.refs.length+" 项（提交时一起登记）：</b>"+esc(built.text)):"提示：切换分类不会丢失已勾选的物品，选好后填一次信息即可全部登记。";
+}
+function buildItems(){
+ var parts=[],refs=[],cats=[];
+ function has(c){if(cats.indexOf(c)<0)cats.push(c)}
+ allUnis().forEach(function(u){if(sel["u-"+u.id]){parts.push("队服 #"+u.id+"（"+u.g+(u.size?u.size:"")+"）");refs.push({t:"uni",id:u.id,n:1});has("队服")}});
+ ["鞋子","帽子"].forEach(function(mc){
+  var data=shoeHatData(mc);
+  ["男","女"].forEach(function(sex){
+   data[sex].forEach(function(row){
+    var n=sel[sex+"-"+row[0]]||0;
+    if(n>0){parts.push((row[0]=="旧款"?sex+"士旧款":sex+"士"+row[0]+"号")+"×"+n);refs.push({t:mc=="鞋子"?"shoe":"hat",sex:sex,model:row[0],n:n});has(mc)}
+   });
+  });
+ });
+ SEED.gear.forEach(function(g){var n=sel["g-"+g[0]]||0;if(n>0){parts.push(g[0]+"×"+n);refs.push({t:"gear",name:g[0],n:n});has("装备")}});
+ (D.customCats||[]).forEach(function(cc){
+  D.customItems.filter(function(x){return x.cat==cc}).forEach(function(x){
+   var n=sel["c-"+x.id]||0;if(n>0){parts.push(x.name+"×"+n);refs.push({t:"custom",itemId:x.id,n:n});has(cc)}
+  });
+ });
+ return {text:parts.join("、"),refs:refs,cat:cats.length?(cats.length==1?cats[0]:cats.join("＋")):""};
+}
+function addBorrow(){
+ var built=buildItems(),items=built.text,n=document.getElementById("bName").value.trim();
+ if(!items){alert("请先勾选要借的物品（可以跨分类勾选：队服、鞋子、帽子、装备等选好后一起提交）");return}
+ if(!n){alert("请填写借用人姓名");return}
+ D.borrows.push({id:uid(),cat:built.cat,items:items,refs:built.refs,name:n,tel:document.getElementById("bTel").value.trim(),act:document.getElementById("bAct").value.trim(),out:today(),note:document.getElementById("bNote").value.trim(),ret:false,retDate:"",ts:Date.now()});
+ save();sel={};renderPick();
+ document.getElementById("bTel").value="";document.getElementById("bAct").value="";document.getElementById("bNote").value="";
+ if(getMe())document.getElementById("bName").value=getMe();
+ alert("登记成功 ✅\n本次借用：\n"+items+"\n\n借出日期："+today()+"\n归还时到「我的登记」点一次归还即可全部归还");
+}
+
+/* ================= 队员：我的登记 ================= */
+function renderMine(){
+ var me=getMe();
+ var list=D.borrows.filter(function(b){return !me||b.name==me}).slice().reverse();
+ document.getElementById("mineList").innerHTML=list.length?list.map(function(b){
+  return '<div class="row"><div class="l"><div class="t1"><span class="tag t-cat">'+b.cat+'</span>'+esc(b.items)+" "+(b.ret?'<span class="tag t-ok">已归还</span>':'<span class="tag t-part">借出中</span>')+'</div>'+
+  '<div class="t2">'+esc(b.name)+(b.act?" · "+esc(b.act):"")+" · 借出 "+fmtD(b.outDate)+(b.ret?" · 归还 "+fmtD(b.retDate):"")+(b.note?" · "+esc(b.note):"")+'</div></div>'+
+  '<div class="r">'+(b.ret?"":'<button class="btn sm" onclick="retMine(\''+b.id+'\')">归还</button>')+"</div></div>";
+ }).join(""):'<div class="empty">还没有借用记录，去「借物资」看看</div>';
+ var rl=D.repairs.filter(function(r){return !me||r.by==me||!r.by}).slice().reverse();
+ document.getElementById("myRepairs").innerHTML=rl.length?rl.map(function(r){
+  return '<div class="row"><div class="l"><div class="t1">'+esc(r.item)+" "+(r.done?'<span class="tag t-ok">已处理</span>':'<span class="tag t-bad">待处理</span>')+'</div><div class="t2">'+esc(r.desc)+'</div></div></div>';
+ }).join(""):"";
+}
+function retMine(id){
+ var b=null;for(var i=0;i<D.borrows.length;i++)if(D.borrows[i].id==id)b=D.borrows[i];
+ if(!b)return;
+ openModal('<h3>确认归还</h3><p class="note">'+esc(b.items)+'（借出 '+fmtD(b.out)+'）</p><label>归还日期</label><input type="date" id="rtD" value="'+today()+'"><div class="grid2" style="margin-top:14px"><button class="btn gray" onclick="closeModal()">取消</button><button class="btn" onclick="retMineOk(\''+id+'\')">确认归还</button></div>');
+}
+function retMineOk(id){
+ var b=null;for(var i=0;i<D.borrows.length;i++)if(D.borrows[i].id==id)b=D.borrows[i];
+ if(b){b.ret=true;b.retDate=document.getElementById("rtD").value||today();b.uts=Date.now();save();closeModal();renderMine();alert("已记录归还 ✅ 归还日期："+fmtD(b.retDate))}
+}
+
+/* ================= 报修（队员提交） ================= */
+/* ---- 报修 ↔ 物资表格联动 ---- */
+function repairTarget(item){
+ var s=(item||"").trim();
+ if(!s)return null;
+ var mu=/队服\s*#?\s*([0-9]{1,3}[A-Za-z]?)|#\s*([0-9]{1,3}[A-Za-z]?)|([0-9]{1,3})\s*号?\s*队服/.exec(s);
+ var uid2=mu?(mu[1]||mu[2]||mu[3]):null;
+ if(uid2){var hit=allUnis().filter(function(u){return String(u.id).toLowerCase()==uid2.toLowerCase()})[0];if(hit)return{t:"uni",id:hit.id,name:"队服 #"+hit.id}}
+ for(var i=0;i<SEED.gear.length;i++){if(s.indexOf(SEED.gear[i][0])>=0)return{t:"gear",key:SEED.gear[i][0],name:SEED.gear[i][0]}}
+ for(var j=0;j<(D.customItems||[]).length;j++){var x=D.customItems[j];if(x.name&&s.indexOf(x.name)>=0)return{t:"custom",id:x.id,name:x.name}}
+ if(s.indexOf("鞋")>=0){var fs=matchModel(s,SEED.shoes);if(fs)return{t:"shoe",key:fs,name:"鞋子("+fs+")"}}
+ if(s.indexOf("帽")>=0){var fh=matchModel(s,SEED.hats);if(fh)return{t:"hat",key:fh,name:"帽子("+fh+")"}}
+ return null;
+}
+function matchModel(s,data){
+ var out=null;
+ ["男","女"].forEach(function(sex){
+  (data[sex]||[]).forEach(function(row){
+   if(out)return;
+   var m=String(row[0]);
+   if(m=="旧款"){if(s.indexOf("旧款")>=0)out=sex+"-旧款"}
+   else{var re=new RegExp("(?:^|\\D)"+m+"(?:\\D|$)");if(re.test(s))out=sex+"-"+m}
+  });
+ });
+ return out;
+}
+function applyBroken(t,qty,desc){
+ if(t.t=="custom"){
+  for(var i=0;i<D.customItems.length;i++)if(D.customItems[i].id==t.id){var x=D.customItems[i];x.brk=(x.brk||0)+qty;x.brkNote=desc;x.uts=Date.now()}
+  return;
+ }
+ var m=t.t=="shoe"?D.shoeEdits:t.t=="hat"?D.hatEdits:t.t=="gear"?D.gearEdits:D.uniEdits;
+ var k=t.t=="uni"?t.id:t.key;
+ var e=m[k]||{};e.brk=(e.brk||0)+qty;e.brkNote=desc;e.uts=Date.now();m[k]=e;
+}
+function applyFixed(t,qty,fix){
+ if(t.t=="custom"){
+  for(var i=0;i<D.customItems.length;i++)if(D.customItems[i].id==t.id){
+   var x=D.customItems[i];x.brk=Math.max(0,(x.brk||0)-qty);
+   if(fix)x.note=(x.note?x.note+"；":"")+"已修复："+fix;
+   x.uts=Date.now();
+  }
+  return;
+ }
+ var m=t.t=="shoe"?D.shoeEdits:t.t=="hat"?D.hatEdits:t.t=="gear"?D.gearEdits:D.uniEdits;
+ var k=t.t=="uni"?t.id:t.key;
+ var e=m[k]||{};e.brk=Math.max(0,(e.brk||0)-qty);
+ if(fix)e.note=(e.note?e.note+"；":"")+"已修复："+fix;
+ e.uts=Date.now();m[k]=e;
+}
+/* ---- 报修勾选界面（同借物页风格） ---- */
+var repCat="队服",repSel={};
+function setRepCat(c){repCat=c;renderRepPick()}
+function renderRepPick(){
+ var bar=document.getElementById("repCatBar");if(!bar)return;
+ bar.innerHTML=allCats().concat(["其他"]).map(function(c){return '<button class="chip'+(repCat==c?" on":"")+'" onclick="setRepCat(\''+c+'\')">'+catIcon(c)+esc(c)+"</button>"}).join("");
+ document.getElementById("repOtherBox").style.display=repCat=="其他"?"block":"none";
+ var el=document.getElementById("repPickList"),OM=outMap(),html="",k;
+ if(repCat=="其他"){
+  html='<p class="note">库存里没有的物品（如门锁、镜子等）选这里用文字填写，只记录报修，不改动物资表格。</p>';
+ }else if(repCat=="队服"){
+  allUnis().forEach(function(u){
+   k="u-"+u.id;var o=OM.uni[u.id]||0,bk=(D.uniEdits[u.id]||{}).brk||0;
+   html+='<div class="pick"><input type="checkbox" class="cb" id="rp-'+k+'" '+(repSel[k]?"checked":"")+(bk?" disabled":"")+' onchange="toggleRepSel(\''+k+'\')">'+
+   '<div class="nm"'+(bk?' style="color:#aaa"':"")+'>#'+u.id+"　"+u.g+"士 "+esc(u.size||"尺码未登记")+'</div><div class="st">'+(o?'<span class="tag t-out">借出中</span>':"")+(bk?'<span class="tag t-bad">已报损坏</span>':"")+"</div></div>";
+  });
+ }else if(repCat=="鞋子"||repCat=="帽子"){
+  var data=shoeHatData(repCat),eds=repCat=="鞋子"?D.shoeEdits:D.hatEdits,omk=repCat=="鞋子"?OM.shoe:OM.hat;
+  ["男","女"].forEach(function(sex){
+   html+='<div class="sec-h" style="margin:6px 0 2px">'+sex+"士</div>";
+   data[sex].forEach(function(row){
+    k=sex+"-"+row[0];var e=eds[k]||{},cnt=e.count!=null?e.count:row[1],bk=e.brk||0,remain=Math.max(0,cnt-bk),o=omk[k]||0;
+    html+='<div class="pick"><div class="nm">'+(row[0]=="旧款"?"旧款":row[0]+" 号")+'<span style="color:var(--sub);font-size:12px">　共 '+cnt+" 件"+(o?" · 借出 "+o:"")+'</span>'+(bk?'<span class="tag t-bad">已报损坏 '+bk+"</span>":"")+"</div>"+
+    '<input type="number" class="qty" id="rp-'+k+'" min="0" max="'+remain+'" value="'+(repSel[k]||0)+'" '+(remain<=0?"disabled":"")+' oninput="setRepQty(\''+k+'\',this.value)"></div>';
+   });
+  });
+ }else if(repCat=="装备"){
+  SEED.gear.forEach(function(g){
+   var e=D.gearEdits[g[0]]||{},cnt=e.count!=null?e.count:g[1],bk=e.brk||0,remain=Math.max(0,cnt-bk),o=OM.gear[g[0]]||0;k="g-"+g[0];
+   html+='<div class="pick"><div class="nm">'+g[0]+'<span style="color:var(--sub);font-size:12px">　共 '+cnt+" 件"+(o?" · 借出 "+o:"")+'</span>'+(bk?'<span class="tag t-bad">已报损坏 '+bk+"</span>":"")+"</div>"+
+   '<input type="number" class="qty" id="rp-'+k+'" min="0" max="'+remain+'" value="'+(repSel[k]||0)+'" '+(remain<=0?"disabled":"")+' oninput="setRepQty(\''+k+'\',this.value)"></div>';
+  });
+ }else{
+  var cis=D.customItems.filter(function(x){return x.cat==repCat});
+  html=cis.length?cis.map(function(x){
+   var bk=x.brk||0,remain=Math.max(0,x.count-bk),o=OM.custom[x.id]||0;k="c-"+x.id;
+   return '<div class="pick"><div class="nm">'+esc(x.name)+'<span style="color:var(--sub);font-size:12px">　共 '+x.count+" 件"+(o?" · 借出 "+o:"")+'</span>'+(bk?'<span class="tag t-bad">已报损坏 '+bk+"</span>":"")+"</div>"+
+   '<input type="number" class="qty" id="rp-'+k+'" min="0" max="'+remain+'" value="'+(repSel[k]||0)+'" '+(remain<=0?"disabled":"")+' oninput="setRepQty(\''+k+'\',this.value)"></div>';
+  }).join(""):'<div class="empty">该门类下没有物品</div>';
+ }
+ el.innerHTML=html;
+ renderRepSummary();
+}
+function toggleRepSel(k){repSel[k]=document.getElementById("rp-"+k).checked?1:0;renderRepSummary()}
+function setRepQty(k,v){var n=parseInt(v);repSel[k]=(n>0?n:0);renderRepSummary()}
+function buildRep(){
+ var parts=[],refs=[],total=0;
+ allUnis().forEach(function(u){if(repSel["u-"+u.id]){parts.push("队服 #"+u.id+"（"+u.g+(u.size?u.size:"")+"）");refs.push({t:"uni",id:u.id,qty:1});total++}});
+ ["鞋子","帽子"].forEach(function(mc){
+  var data=shoeHatData(mc);
+  ["男","女"].forEach(function(sex){
+   data[sex].forEach(function(row){
+    var n=repSel[sex+"-"+row[0]]||0;
+    if(n>0){parts.push((row[0]=="旧款"?sex+"士旧款":sex+"士"+row[0]+"号")+"×"+n);refs.push({t:mc=="鞋子"?"shoe":"hat",sex:sex,model:row[0],qty:n});total+=n}
+   });
+  });
+ });
+ SEED.gear.forEach(function(g){var n=repSel["g-"+g[0]]||0;if(n>0){parts.push(g[0]+"×"+n);refs.push({t:"gear",key:g[0],qty:n});total+=n}});
+ (D.customCats||[]).forEach(function(cc){
+  D.customItems.filter(function(x){return x.cat==cc}).forEach(function(x){
+   var n=repSel["c-"+x.id]||0;if(n>0){parts.push(x.name+"×"+n);refs.push({t:"custom",id:x.id,qty:n});total+=n}
+  });
+ });
+ return {text:parts.join("、"),refs:refs,total:total};
+}
+function renderRepSummary(){
+ var el=document.getElementById("repSummary");if(!el)return;
+ if(repCat=="其他"){el.innerHTML="";return}
+ var b=buildRep();
+ el.innerHTML=b.text?("<b>✅ 已选报修物品（提交时一起登记）：</b>"+esc(b.text)):"提示：可同时勾选多件物品一起报修；损坏数量不能超过该物品的总数。";
+}
+function refToTarget(r){
+ if(r.t=="uni")return{t:"uni",id:r.id};
+ if(r.t=="custom")return{t:"custom",id:r.id};
+ if(r.t=="gear")return{t:"gear",key:r.key};
+ return{t:r.t,key:r.sex+"-"+r.model};
+}
+function addRepair(){
+ var de=document.getElementById("rDesc").value.trim();
+ var built=buildRep(),other=repCat=="其他";
+ var it=other?document.getElementById("rItem").value.trim():built.text;
+ if(!other&&!built.refs.length){alert("请先在上方勾选要报修的物品");return}
+ if(other&&!it){alert("请填写报修物品名称");return}
+ if(!de){alert("请填写问题描述");return}
+ D.repairs.push({id:uid(),item:it,refs:built.refs,qty:other?1:built.total,desc:de,by:document.getElementById("rBy").value.trim(),done:false,ts:Date.now(),uts:Date.now()});
+ var extra="";
+ if(!other){
+  built.refs.forEach(function(r){applyBroken(refToTarget(r),r.qty,de)});
+  extra="\n已同步在物资表格中标记损坏";
+  refreshInvViews();
+ }
+ save();repSel={};renderRepPick();
+ document.getElementById("rDesc").value="";document.getElementById("rBy").value="";
+ renderMine();alert("上报成功 ✅\n"+(other?it:built.text)+"\n"+de+extra);
+}
+function refreshInvViews(){if(curView=="v-inv")renderInv();if(curView=="v-mborrow")renderPick();}
+
+/* ================= 管理员：首页 ================= */
+function allEntries(){
+ var es=[];
+ SEED.terms.forEach(function(t){
+  t.entries.forEach(function(e){if(D.calRemoved.indexOf(e.id)<0)es.push(e)});
+  (D.calAdded[t.id]||[]).forEach(function(e){es.push(e)});
+ });
+ es.sort(function(a,b){return a.d<b.d?-1:1});
+ return es;
+}
+function renderHome(){
+ var es=allEntries(),td=today(),next=null,last=null;
+ es.forEach(function(e){if(e.d>=td){if(!next)next=e}else last=e});
+ var nb=document.getElementById("nextBanner");
+ if(next){
+  var diff=Math.round((new Date(next.d)-new Date(td))/864e5);
+  nb.innerHTML='<div class="d1">下次换旗（'+diff+'天后 · '+weekD(next.d)+'）</div><div class="d2">'+fmtD(next.d)+'</div><div class="d3">国旗 '+next.f+' 面 · 院旗 '+next.y+' 面 · 校旗 '+next.s+' 面'+(next.w?' · '+esc(next.w):'')+'</div>';
+ }else{
+  nb.innerHTML='<div class="d1">暂无未到的换旗安排</div><div class="d2">请到「换旗」页添加新学期计划</div><div class="d3">'+(last?("上次换旗："+fmtD(last.d)):"")+'</div>';
+ }
+ var ok=0,part=0,bad=0,unk=0;
+ allUnis().forEach(function(u){var c=uniCls(uniSt(u));if(c=="ok")ok++;else if(c=="partial")part++;else if(c=="broken")bad++;else unk++});
+ document.getElementById("homeStats").innerHTML=
+  '<div class="stat"><b>'+allUnis().length+'</b><span>队服总数</span></div>'+
+  '<div class="stat ok"><b>'+ok+'</b><span>完好</span></div>'+
+  '<div class="stat part"><b>'+part+'</b><span>缺配件</span></div>'+
+  '<div class="stat bad"><b>'+bad+'</b><span>损坏</span></div>';
+ var feed=[],i;
+ for(i=D.borrows.length-1;i>=0&&feed.length<4;i--){var b=D.borrows[i];feed.push('<div class="row"><div class="l"><div class="t1"><span class="tag t-cat">'+b.cat+'</span>'+esc(b.name)+' 借用</div><div class="t2">'+esc(b.items)+'</div></div><div class="r"><span class="tag '+(b.ret?"t-ok":"t-part")+'">'+(b.ret?"已还":"借出")+'</span></div></div>')}
+ for(i=D.repairs.length-1;i>=0&&feed.length<7;i--){var r=D.repairs[i];feed.push('<div class="row"><div class="l"><div class="t1">🔧 '+esc(r.item)+'</div><div class="t2">'+esc(r.desc)+'</div></div><div class="r"><span class="tag '+(r.done?"t-ok":"t-bad")+'">'+(r.done?"已处理":"待处理")+'</span></div></div>')}
+ document.getElementById("homeFeed").innerHTML=feed.length?feed.join(""):'<div class="empty">暂无动态</div>';
+}
+
+/* ================= 管理员：换旗日历 ================= */
+function renderCal(){
+ var tt=document.getElementById("termTabs");
+ tt.innerHTML=SEED.terms.map(function(t){return '<button class="tab'+(D.curTerm==t.id?" on":"")+'" onclick="setTerm(\''+t.id+'\')">'+t.name+"</button>"}).join("");
+ var term=SEED.terms.find(function(t){return t.id==D.curTerm});if(!term)term=SEED.terms[0];
+ var es=term.entries.filter(function(e){return D.calRemoved.indexOf(e.id)<0}).concat(D.calAdded[term.id]||[]);
+ es.sort(function(a,b){return a.d<b.d?-1:1});
+ var td=today(),nextId=null;
+ for(var i=0;i<es.length;i++){if(es[i].d>=td){nextId=es[i].id;break}}
+ var html=es.map(function(e){
+  var cls=e.d<td?"past":(e.id==nextId?"next":"");
+  var flags=[];
+  if(e.f)flags.push("国旗×"+e.f);if(e.y)flags.push("院旗×"+e.y);if(e.s)flags.push("校旗×"+e.s);
+  return '<div class="card cal-item '+cls+'"><div style="display:flex;justify-content:space-between"><div class="cd">'+fmtD(e.d)+' <span style="font-weight:400;font-size:12px;color:var(--sub)">'+weekD(e.d)+'</span>'+(e.id==nextId?'<span class="badge">下次换旗</span>':"")+'</div><button class="del" onclick="delEntry(\''+e.id+'\')">✕</button></div>'+
+  '<div style="margin-top:4px">'+flags.map(function(f){return '<span class="tag t-flag">'+f+"</span>"}).join("")+(e.w?'<span class="tag t-unk">'+esc(e.w)+"</span>":"")+'</div>'+
+  ((e.why||e.note)?'<div class="t2" style="margin-top:4px">'+esc(e.why)+(e.why&&e.note?"；":"")+esc(e.note)+"</div>":"")+"</div>";
+ }).join("");
+ document.getElementById("calList").innerHTML=html||'<div class="card empty">本学期暂无安排，请在下方添加</div>';
+}
+function setTerm(id){D.curTerm=id;save();renderCal()}
+function addEntry(){
+ var d=document.getElementById("addD").value;if(!d){alert("请选择日期");return}
+ var e={id:"u-"+uid(),d:d,f:+document.getElementById("addF").value||0,y:+document.getElementById("addY").value||0,s:+document.getElementById("addS").value||0,w:document.getElementById("addW").value.trim(),why:"",note:document.getElementById("addN").value.trim()};
+ (D.calAdded[D.curTerm]=D.calAdded[D.curTerm]||[]).push(e);save();renderCal();
+ document.getElementById("addN").value="";
+}
+function delEntry(id){
+ if(!confirm("删除这条换旗安排？"))return;
+ D.calRemoved.push(id);
+ for(var t in D.calAdded){D.calAdded[t]=D.calAdded[t].filter(function(e){return e.id!=id})}
+ save();renderCal();
+}
+
+/* ================= 管理员：物资 ================= */
+var invCat="uni",uniFilter="all";
+function setInvCat(c){invCat=c;document.querySelectorAll("#invTabs .tab").forEach(function(t){t.classList.toggle("on",t.dataset.c==c)});renderInv()}
+function setUniFilter(f){uniFilter=f;document.querySelectorAll("#uniChips .chip").forEach(function(t){t.classList.toggle("on",t.dataset.f==f)});renderInv()}
+function renderInv(){
+ if(allCats().indexOf(invCat)<0)invCat="队服";
+ renderCats();
+ var box=document.getElementById("invList"),html="",OM=outMap();
+ if(invCat=="队服"){
+  var q=(document.getElementById("uniSearch").value||"").trim();
+  var list=allUnis().filter(function(u){
+   var c=uniCls(uniSt(u));if(uniFilter!="all"&&c!=uniFilter)return false;
+   if(q){var s=(u.id+" "+u.g+" "+u.size+" "+u.cond+" "+uniSt(u)+" "+uniNote(u)).toLowerCase();if(s.indexOf(q.toLowerCase())<0)return false}
+   return true;
+  });
+  html=list.map(function(u){
+   var c=uniCls(uniSt(u)),o=OM.uni[u.id]||0,bk=(D.uniEdits[u.id]||{}).brk||0,ubn=(D.uniEdits[u.id]||{}).brkNote||"";
+   return '<div class="card" style="padding:12px 14px" onclick="editUni(\''+u.id+'\')"><div class="row" style="border:none;padding:0"><div class="l"><div class="t1">'+(o?'<span class="tag t-out">借出</span>':"")+(bk?'<span class="tag t-bad" title="'+esc(ubn)+'">损坏'+bk+'</span>':"")+tagHtml(c)+' 队服 '+u.g+' '+esc(u.size||"—")+' 号 <span style="font-weight:400;color:var(--sub);font-size:12px">#'+u.id+'</span></div>'+
+   '<div class="t2">'+(uniSt(u)?esc(uniSt(u)):"尚未登记状态")+(uniNote(u)?" · "+esc(uniNote(u)):"")+(bk?' · <span style="color:#b91c1c">损坏情况：'+esc(ubn)+"</span>":"")+'</div>'+
+   '<div class="t2">📍 '+esc(uniLoc(u))+'</div></div><div class="r" style="align-self:center;color:#ccc">›</div></div></div>';
+  }).join("");
+  var head='<div class="card" style="display:flex;gap:8px;align-items:center;padding:10px 14px"><div style="flex:1"><b>队服</b><span style="color:var(--sub);font-size:12px">（共 '+allUnis().length+' 件，点卡片可改状态）</span></div><button class="btn sm" onclick="addUniModal()">➕ 添加队服</button></div>';
+  box.innerHTML=head+(html||'<div class="card empty">没有符合条件的队服</div>');
+ }else if(invCat=="鞋子"||invCat=="帽子"){
+  var data=invCat=="鞋子"?SEED.shoes:SEED.hats,edits=invCat=="鞋子"?D.shoeEdits:D.hatEdits,OMK=invCat=="鞋子"?OM.shoe:OM.hat;
+  Object.keys(data).forEach(function(sex){
+   html+='<div class="sec-h">'+sex+'士</div><div class="card">';
+   data[sex].forEach(function(row){
+    var k=sex+"-"+row[0],e=edits[k]||{},cnt=e.count!=null?e.count:row[1],note=e.note||row[2]||"",o=OMK[k]||0;
+    html+='<div class="row" onclick="editShoeHat(\''+invCat+'\',\''+k+'\')"><div class="l"><div class="t1">'+(row[0]=="旧款"?"旧款":row[0]+' 号')+' <span style="font-weight:400;color:var(--sub)">× '+cnt+"</span> "+(o?'<span class="tag t-out">借出 '+o+"</span>":"")+(e.brk?'<span class="tag t-bad">损坏 '+e.brk+"</span>":"")+(note?'<span class="tag t-part">'+esc(note)+"</span>":"")+'</div><div class="t2">📍 '+esc(e.loc||SEED.loc)+(e.brk&&e.brkNote?' · <span style="color:#b91c1c">损坏情况：'+esc(e.brkNote)+"</span>":"")+"</div></div><div class='r' style='align-self:center;color:#ccc'>›</div></div>";
+   });
+   html+="</div>";
+  });
+  box.innerHTML=html;
+ }else if(invCat=="装备"){
+  html='<div class="sec-h">旗类 / 仪仗装备</div><div class="card">';
+  SEED.gear.forEach(function(g){
+   var e=D.gearEdits[g[0]]||{},cnt=e.count!=null?e.count:g[1],o=OM.gear[g[0]]||0;
+   html+='<div class="row" onclick="editGear(\''+g[0]+'\')"><div class="l"><div class="t1">'+g[0]+' <span style="font-weight:400;color:var(--sub)">× '+cnt+"</span>"+(o?' <span class="tag t-out">借出 '+o+"</span>":"")+(e.brk?' <span class="tag t-bad">损坏 '+e.brk+"</span>":"")+(e.note?' <span class="tag t-part">'+esc(e.note)+"</span>":"")+'</div><div class="t2">📍 '+esc(e.loc||SEED.loc)+(e.brk&&e.brkNote?' · <span style="color:#b91c1c">损坏情况：'+esc(e.brkNote)+"</span>":"")+"</div></div><div class='r' style='align-self:center;color:#ccc'>›</div></div>";
+  });
+  html+="</div>";box.innerHTML=html;
+ }else{
+  var cis=D.customItems.filter(function(x){return x.cat==invCat});
+  html='<div class="card" style="display:flex;gap:8px;align-items:center;padding:10px 14px"><div style="flex:1"><b>'+esc(invCat)+'</b><span style="color:var(--sub);font-size:12px">（'+cis.length+' 种物品）</span></div><button class="btn sm" onclick="addCustomItem()">➕ 添加物品</button></div>';
+  html+=cis.length?cis.map(function(x){
+   var o=OM.custom[x.id]||0;
+   return '<div class="card" style="padding:12px 14px" onclick="editCustomItem(\''+x.id+'\')"><div class="row" style="border:none;padding:0"><div class="l"><div class="t1">'+esc(x.name)+' <span style="font-weight:400;color:var(--sub)">× '+x.count+"</span> "+(o?'<span class="tag t-out">借出 '+o+"</span>":"")+(x.brk?'<span class="tag t-bad">损坏 '+x.brk+"</span>":"")+(x.note?'<span class="tag t-part">'+esc(x.note)+"</span>":"")+'</div><div class="t2">📍 '+esc(x.loc||SEED.loc)+(x.brk&&x.brkNote?' · <span style="color:#b91c1c">损坏情况：'+esc(x.brkNote)+"</span>":"")+"</div></div><div class='r' style='align-self:center;color:#ccc'>›</div></div></div>";
+  }).join(""):'<div class="card empty">还没有物品，点上方「➕ 添加物品」</div>';
+  box.innerHTML=html;
+ }
+}
+function editUni(id){
+ var u=allUnis().find(function(x){return x.id==id}),e=D.uniEdits[id]||{};
+ openModal('<h3>队服 #'+esc(u.id)+'（'+u.g+" "+esc(u.size||"—")+'）</h3>'+
+ '<label>状态</label><input id="eSt" value="'+esc(e.st!=null?e.st:u.st)+'" placeholder="如：好 / 少肩章 / 扣子坏">'+
+ '<label>存放位置</label><input id="eLoc" value="'+esc(e.loc||SEED.loc)+'">'+
+ '<label>备注</label><input id="eNote" value="'+esc(e.note||"")+'">'+
+ '<div class="grid2" style="margin-top:14px"><button class="btn gray" onclick="closeModal()">取消</button><button class="btn" onclick="saveUni(\''+id+'\')">保存</button></div>'+
+ '<div style="margin-top:10px"><button class="btn gray blk" onclick="delUni(\''+id+'\')">删除该队服（报废 / 丢失）</button></div>');
+}
+function saveUni(id){
+ D.uniEdits[id]={st:document.getElementById("eSt").value.trim(),loc:document.getElementById("eLoc").value.trim(),note:document.getElementById("eNote").value.trim(),uts:Date.now()};
+ save();closeModal();renderInv();
+}
+/* ---- 添加 / 删除队服 ---- */
+function addUniModal(){
+ openModal('<h3>➕ 添加队服</h3>'+
+ '<label>编号 *</label><input id="nuId" placeholder="如：61（不要和现有编号重复）">'+
+ '<div class="grid2"><div><label>男 / 女</label><select id="nuG"><option>男</option><option>女</option></select></div>'+
+ '<div><label>尺码</label><input id="nuSize" placeholder="如：185"></div></div>'+
+ '<div class="grid2"><div><label>新 / 旧</label><select id="nuCond"><option>新</option><option>旧</option></select></div>'+
+ '<div><label>状态</label><input id="nuSt" value="好"></div></div>'+
+ '<label>存放位置</label><input id="nuLoc" value="'+esc(SEED.loc)+'">'+
+ '<label>备注</label><input id="nuNote" placeholder="选填">'+
+ '<div class="grid2" style="margin-top:14px"><button class="btn gray" onclick="closeModal()">取消</button><button class="btn" onclick="saveUniNew()">保存</button></div>');
+}
+function saveUniNew(){
+ var id=document.getElementById("nuId").value.trim();
+ if(!id){alert("请填写编号");return}
+ if(allUnis().some(function(x){return x.id==id})){alert("编号 "+id+" 已经存在了，请换一个编号");return}
+ D.customUnis.push({id:id,g:document.getElementById("nuG").value,size:document.getElementById("nuSize").value.trim(),cond:document.getElementById("nuCond").value,st:document.getElementById("nuSt").value.trim()});
+ var loc=document.getElementById("nuLoc").value.trim(),note=document.getElementById("nuNote").value.trim();
+ if(loc||note)D.uniEdits[id]={st:"",loc:loc,note:note,uts:Date.now()};
+ save();closeModal();renderInv();
+}
+function delUni(id){
+ if(!confirm("删除队服 #"+id+"？其借用记录会保留。"))return;
+ D.delUnis.push(id);
+ D.customUnis=D.customUnis.filter(function(x){return x.id!=id});
+ delete D.uniEdits[id];
+ save();closeModal();renderInv();
+}
+function editShoeHat(cat,k){
+ var data=cat=="鞋子"?SEED.shoes:SEED.hats,edits=cat=="鞋子"?D.shoeEdits:D.hatEdits;
+ var parts=k.split("-"),sex=parts[0],model=parts[1];
+ var row=data[sex].find(function(r){return String(r[0])==model}),e=edits[k]||{};
+ openModal('<h3>'+(cat=="鞋子"?"鞋":"帽")+' · '+sex+"士 "+esc(model)+" 号</h3>"+
+ '<label>数量</label><input id="eCnt" type="number" value="'+(e.count!=null?e.count:row[1])+'">'+
+ '<label>状况</label><input id="eNote" value="'+esc(e.note||row[2]||"")+'" placeholder="如：缺少帽徽 / 全新">'+
+ '<label>存放位置</label><input id="eLoc" value="'+esc(e.loc||SEED.loc)+'">'+
+ '<div class="grid2" style="margin-top:14px"><button class="btn gray" onclick="closeModal()">取消</button><button class="btn" onclick="saveShoeHat(\''+cat+'\',\''+k+'\')">保存</button></div>');
+}
+function saveShoeHat(cat,k){
+ var edits=cat=="鞋子"?D.shoeEdits:D.hatEdits;
+ edits[k]={count:+document.getElementById("eCnt").value||0,note:document.getElementById("eNote").value.trim(),loc:document.getElementById("eLoc").value.trim(),uts:Date.now()};
+ save();closeModal();renderInv();
+}
+function editGear(name){
+ var g=SEED.gear.find(function(x){return x[0]==name}),e=D.gearEdits[name]||{};
+ openModal('<h3>'+esc(name)+"</h3>"+
+ '<label>数量</label><input id="eCnt" type="number" value="'+(e.count!=null?e.count:g[1])+'">'+
+ '<label>状况 / 备注</label><input id="eNote" value="'+esc(e.note||"")+'">'+
+ '<label>存放位置</label><input id="eLoc" value="'+esc(e.loc||SEED.loc)+'">'+
+ '<div class="grid2" style="margin-top:14px"><button class="btn gray" onclick="closeModal()">取消</button><button class="btn" onclick="saveGear(\''+name+'\')">保存</button></div>');
+}
+function saveGear(name){
+ D.gearEdits[name]={count:+document.getElementById("eCnt").value||0,note:document.getElementById("eNote").value.trim(),loc:document.getElementById("eLoc").value.trim(),uts:Date.now()};
+ save();closeModal();renderInv();
+}
+/* ---- 自定义门类与物品 ---- */
+function openCatMgr(){
+ var html='<h3>🗂️ 物资门类管理</h3><p class="note">新增的门类会同时出现在管理端「物资」页和队员「借物资」页。</p>'+
+ '<label>新增门类名称</label><div style="display:flex;gap:8px"><input id="ncName" placeholder="如：手套 / 领带 / 旗子"><button class="btn" style="flex-shrink:0" onclick="addCat()">添加</button></div>';
+ if((D.customCats||[]).length){
+  html+='<div class="sec-h">已添加的门类</div>';
+  D.customCats.forEach(function(c){
+   var n=D.customItems.filter(function(x){return x.cat==c}).length;
+   html+='<div class="row"><div class="l"><div class="t1">'+esc(c)+' <span style="font-weight:400;color:var(--sub);font-size:12px">'+n+' 种物品</span></div></div><div class="r"><button class="btn sm gray" onclick="delCat(\''+c+'\')">删除</button></div></div>';
+  });
+ }
+ html+='<div style="margin-top:12px"><button class="btn blk gray" onclick="closeModal()">关闭</button></div>';
+ openModal(html);
+}
+function addCat(){
+ var v=document.getElementById("ncName").value.trim();
+ if(!v)return;
+ if(allCats().indexOf(v)>=0){alert("已经有这个门类了");return}
+ D.customCats.push(v);save();closeModal();renderCats();invCat=v;renderInv();
+}
+function delCat(c){
+ if(!confirm("删除门类「"+c+"」及其下所有物品？已有的借用记录会保留。"))return;
+ D.customCats=D.customCats.filter(function(x){return x!=c});
+ D.delCats.push(c);
+ D.customItems.forEach(function(x){if(x.cat==c)D.delItems.push(x.id)});
+ D.customItems=D.customItems.filter(function(x){return x.cat!=c});
+ if(invCat==c)invCat="队服";if(mCat==c)mCat="队服";
+ save();closeModal();renderCats();renderInv();
+}
+function addCustomItem(){
+ openModal('<h3>➕ 添加物品（'+esc(invCat)+'）</h3>'+
+ '<label>物品名称 *</label><input id="ciName" placeholder="如：白手套 / 指挥刀旗穗">'+
+ '<label>数量</label><input id="ciCnt" type="number" value="0" min="0">'+
+ '<label>存放位置</label><input id="ciLoc" value="'+esc(SEED.loc)+'">'+
+ '<label>状况 / 备注</label><input id="ciNote" placeholder="选填，如：全新 / 需补充">'+
+ '<div class="grid2" style="margin-top:14px"><button class="btn gray" onclick="closeModal()">取消</button><button class="btn" onclick="saveCustomItem()">保存</button></div>');
+}
+function saveCustomItem(){
+ var n=document.getElementById("ciName").value.trim();
+ if(!n){alert("请填写物品名称");return}
+ D.customItems.push({id:uid(),cat:invCat,name:n,count:+document.getElementById("ciCnt").value||0,loc:document.getElementById("ciLoc").value.trim(),note:document.getElementById("ciNote").value.trim()});
+ save();closeModal();renderInv();
+}
+function editCustomItem(id){
+ var x=null;for(var i=0;i<D.customItems.length;i++)if(D.customItems[i].id==id)x=D.customItems[i];
+ if(!x)return;
+ var o=(outMap().custom[id]||0);
+ openModal('<h3>'+esc(x.cat)+' · '+esc(x.name)+"</h3>"+
+ '<label>物品名称</label><input id="ciName" value="'+esc(x.name)+'">'+
+ '<label>数量</label><input id="ciCnt" type="number" value="'+x.count+'" min="0">'+
+ (o?'<p class="note" style="margin-top:6px">🟣 当前借出 '+o+' 件未归还</p>':"")+
+ '<label>存放位置</label><input id="ciLoc" value="'+esc(x.loc||SEED.loc)+'">'+
+ '<label>状况 / 备注</label><input id="ciNote" value="'+esc(x.note||"")+'">'+
+ '<div class="grid2" style="margin-top:14px"><button class="btn gray" onclick="closeModal()">取消</button><button class="btn" onclick="saveCustomItemEdit(\''+id+'\')">保存</button></div>'+
+ '<div style="margin-top:10px"><button class="btn gray blk" onclick="delCustomItem(\''+id+'\')">删除该物品</button></div>');
+}
+function saveCustomItemEdit(id){
+ var n=document.getElementById("ciName").value.trim();
+ if(!n){alert("请填写物品名称");return}
+ for(var i=0;i<D.customItems.length;i++)if(D.customItems[i].id==id){
+  D.customItems[i].name=n;D.customItems[i].count=+document.getElementById("ciCnt").value||0;
+  D.customItems[i].loc=document.getElementById("ciLoc").value.trim();D.customItems[i].note=document.getElementById("ciNote").value.trim();D.customItems[i].uts=Date.now();
+ }
+ save();closeModal();renderInv();
+}
+function delCustomItem(id){
+ if(!confirm("删除该物品？已有的借用记录会保留。"))return;
+ D.delItems.push(id);D.customItems=D.customItems.filter(function(x){return x.id!=id});save();closeModal();renderInv();
+}
+
+/* ================= 管理员：借还登记管理 ================= */
+var recFilter="all";
+function renderRecChips(){
+ var chips='<button class="chip'+(recFilter=="all"?" on":"")+'" data-f="all" onclick="setRecFilter(\'all\')">全部</button>';
+ allCats().forEach(function(c){chips+='<button class="chip'+(recFilter==c?" on":"")+'" data-f="'+esc(c)+'" onclick="setRecFilter(\''+c+'\')">'+catIcon(c)+esc(c)+"</button>"});
+ chips+='<button class="chip'+(recFilter=="out"?" on":"")+'" data-f="out" onclick="setRecFilter(\'out\')">未归还</button>';
+ document.getElementById("recChips").innerHTML=chips;
+}
+function setRecFilter(f){recFilter=f;renderRec()}
+function renderRec(){
+ if(recFilter!="all"&&recFilter!="out"&&allCats().indexOf(recFilter)<0)recFilter="all";
+ renderRecChips();
+ var list=D.borrows.slice().reverse().filter(function(b){
+  if(recFilter=="all")return true;
+  if(recFilter=="out")return !b.ret;
+  return b.cat==recFilter||(b.cat&&b.cat.indexOf(recFilter)>=0);
+ });
+ var outN=D.borrows.filter(function(b){return !b.ret}).length;
+ document.getElementById("recCount").textContent="共 "+D.borrows.length+" 条 · 未归还 "+outN+" 条";
+ document.getElementById("recList").innerHTML=list.length?list.map(function(b){
+  return '<div class="row"><div class="l"><div class="t1"><span class="tag t-cat">'+b.cat+'</span>'+esc(b.items)+" "+(b.ret?'<span class="tag t-ok">已归还 '+fmtD(b.retDate)+'</span>':'<span class="tag t-part">借出中</span>')+'</div>'+
+  '<div class="t2">'+esc(b.name)+(b.tel?" · "+esc(b.tel):"")+(b.act?" · "+esc(b.act):"")+" · 借出 "+fmtD(b.out)+(b.note?" · "+esc(b.note):"")+'</div></div>'+
+  '<div class="r" style="display:flex;gap:6px">'+(b.ret?"":'<button class="btn sm" onclick="recRet(\''+b.id+'\')">还</button>')+'<button class="btn sm sec" onclick="editRec(\''+b.id+'\')">改</button></div></div>';
+ }).join(""):'<div class="empty">暂无登记记录</div>';
+ var rl=D.repairs.slice().reverse();
+ document.getElementById("admRepairs").innerHTML='<div style="padding:4px 2px"><b>报修上报</b><span style="color:var(--sub);font-size:12px;margin-left:6px">完整处理请到「报修」页</span></div>'+(rl.length?rl.map(function(r){
+  return '<div class="row"><div class="l"><div class="t1">'+esc(r.item)+(r.qty&&r.qty>1?' <span class="tag t-part">×'+r.qty+"</span>":"")+" "+(r.done?'<span class="tag t-ok">已处理</span>':'<span class="tag t-bad">待处理</span>')+'</div><div class="t2">'+esc(r.desc)+(r.by?" · 上报人："+esc(r.by):"")+(r.done?'<br>🔧 '+esc(r.fix||"已处理"):"")+'</div></div><div class="r">'+(r.done?'<button class="btn sm gray" onclick="delRepair(\''+r.id+'\')">删除</button>':'<button class="btn sm" onclick="doneRepair(\''+r.id+'\')">处理</button>')+"</div></div>";
+ }).join(""):'<div class="empty">暂无报修记录</div>')+'</div>';
+}
+function recRet(id){
+ var b=null;for(var i=0;i<D.borrows.length;i++)if(D.borrows[i].id==id)b=D.borrows[i];
+ if(b){b.ret=true;b.retDate=today();b.uts=Date.now();save();renderRec()}
+}
+function editRec(id){
+ var b=id?null:null;
+ if(id){for(var i=0;i<D.borrows.length;i++)if(D.borrows[i].id==id)b=D.borrows[i]}
+ b=b||{cat:"队服",items:"",name:"",tel:"",act:"",out:today(),note:"",ret:false,retDate:""};
+ openModal('<h3>'+(id?"修改登记":"➕ 代登记")+"</h3>"+
+ '<label>分类</label><select id="eCat">'+allCats().map(function(c){return '<option '+(b.cat==c?"selected":"")+">"+esc(c)+"</option>"}).join("")+(b.cat&&allCats().indexOf(b.cat)<0?'<option selected>'+esc(b.cat)+"</option>":"")+"</select>"+
+ '<label>物品明细 *</label><input id="eItems" value="'+esc(b.items)+'" placeholder="如：队服 #35（男180）、武装带×1">'+
+ '<label>借用人 *</label><input id="eName" value="'+esc(b.name)+'">'+
+ '<label>联系方式</label><input id="eTel" value="'+esc(b.tel)+'">'+
+ '<label>活动名称</label><input id="eAct" value="'+esc(b.act)+'">'+
+ '<label>借出日期</label><input type="date" id="eOut" value="'+esc(b.out)+'">'+
+ '<label style="display:flex;align-items:center;gap:8px;margin-top:12px"><input type="checkbox" id="eRet" style="width:auto;margin-top:0" '+(b.ret?"checked":"")+' onchange="document.getElementById(\'eRetD\').style.display=this.checked?\'block\':\'none\')"> 已归还</label>'+
+ '<div id="eRetD" style="display:'+(b.ret?"block":"none")+'"><label>归还日期</label><input type="date" id="eRetDate" value="'+esc(b.retDate||today())+'"></div>'+
+ '<label>备注</label><input id="eNote" value="'+esc(b.note)+'">'+
+ '<div class="grid2" style="margin-top:14px"><button class="btn gray" onclick="closeModal()">取消</button><button class="btn" onclick="saveRec(\''+(id||"")+'\')">保存</button></div>'+(id?'<div style="margin-top:10px"><button class="btn gray blk" onclick="delRec(\''+id+'\')">删除这条登记</button></div>':""));
+}
+function saveRec(id){
+ var items=document.getElementById("eItems").value.trim(),name=document.getElementById("eName").value.trim();
+ if(!items||!name){alert("请填写物品明细和借用人");return}
+ var ret=document.getElementById("eRet").checked;
+ var obj={cat:document.getElementById("eCat").value,items:items,name:name,tel:document.getElementById("eTel").value.trim(),act:document.getElementById("eAct").value.trim(),out:document.getElementById("eOut").value||today(),note:document.getElementById("eNote").value.trim(),ret:ret,retDate:ret?(document.getElementById("eRetDate")?document.getElementById("eRetDate").value||today():""):""};
+ if(id){for(var i=0;i<D.borrows.length;i++)if(D.borrows[i].id==id){for(var k in obj)D.borrows[i][k]=obj[k];D.borrows[i].uts=Date.now()}}
+ else{obj.id=uid();obj.ts=Date.now();obj.uts=Date.now();D.borrows.push(obj)}
+ save();closeModal();renderRec();
+}
+function delRec(id){
+ if(!confirm("删除这条借还登记？"))return;
+ D.delBorrows.push({id:id,uts:Date.now()});D.borrows=D.borrows.filter(function(x){return x.id!=id});save();closeModal();renderRec();
+}
+function doneRepair(id){
+ var r=null;for(var i=0;i<D.repairs.length;i++)if(D.repairs[i].id==id)r=D.repairs[i];
+ if(!r)return;
+ var hasRefs=r.refs&&r.refs.length;
+ openModal('<h3>🔧 处理报修</h3>'+
+ '<p class="note"><b>'+esc(r.item)+'</b>'+(r.qty&&r.qty>1?"（共 "+r.qty+" 件）":"")+'<br>'+esc(r.desc)+(hasRefs?'<br>确认后将同步更新物资表格中对应物品的描述与损坏数量':"（未关联库存物品，仅记录处理结果）")+'</p>'+
+ (hasRefs?"":'<label>修复数量</label><input id="fQty" type="number" min="0" value="'+(r.qty||1)+'">')+
+ '<label>处理成什么样了 *（将写入物资表格描述）</label><input id="fRes" placeholder="如：已更换新扣子，恢复使用 / 已送修，预计下周归还">'+
+ '<div class="grid2" style="margin-top:14px"><button class="btn gray" onclick="closeModal()">取消</button><button class="btn" onclick="fixRepairOk(\''+id+'\')">确认处理</button></div>');
+}
+function brkOf(t){
+ if(t.t=="custom"){var x=D.customItems.find(function(y){return y.id==t.id});return x?(x.brk||0):0}
+ var m=t.t=="shoe"?D.shoeEdits:t.t=="hat"?D.hatEdits:t.t=="gear"?D.gearEdits:D.uniEdits;
+ var e=m[t.t=="uni"?t.id:t.key]||{};return e.brk||0;
+}
+function fixRepairOk(id){
+ var r=null;for(var i=0;i<D.repairs.length;i++)if(D.repairs[i].id==id)r=D.repairs[i];
+ if(!r)return;
+ var res=document.getElementById("fRes").value.trim();
+ if(!res){alert("请填写处理成什么样了");return}
+ var touched=false;
+ if(r.refs&&r.refs.length){
+  r.refs.forEach(function(rf){applyFixed(refToTarget(rf),rf.qty,res);touched=true});
+ }else{
+  var t=repairTarget(r.item);
+  var fq=document.getElementById("fQty");
+  var q=Math.max(0,parseInt(fq?fq.value:"0")||0);
+  if(t&&q>0){applyFixed(t,q,res);touched=true}
+ }
+ r.done=true;r.fix=res;r.uts=Date.now();
+ save();closeModal();
+ if(touched)refreshInvViews();
+ if(curView=="v-rep")renderRep();if(curView=="v-rec")renderRec();
+ alert("已记录处理 ✅"+(touched?"\n物资表格已同步更新":""));
+}
+function renderRep(){
+ var pend=D.repairs.filter(function(r){return !r.done}).slice().reverse();
+ var done=D.repairs.filter(function(r){return r.done}).slice().reverse();
+ document.getElementById("repCount").textContent="待处理 "+pend.length+" · 已处理 "+done.length;
+ function card(r){
+  var t=repairTarget(r.item);
+  return '<div class="row"><div class="l"><div class="t1">'+esc(r.item)+(r.qty&&r.qty>1?' <span class="tag t-part">×'+r.qty+"</span>":"")+" "+(r.done?'<span class="tag t-ok">已处理</span>':'<span class="tag t-bad">待处理</span>')+(t&&!r.done?'<span class="tag t-out">已标记损坏</span>':"")+'</div>'+
+  '<div class="t2">'+esc(r.desc)+(r.by?" · 上报人："+esc(r.by):(r.by===null?"":" · 未署名"))+'</div>'+
+  (r.done?'<div class="t2" style="color:#166534">🔧 处理结果：'+esc(r.fix||"已处理")+'</div>':"")+"</div>"+
+  '<div class="r" style="display:flex;gap:6px">'+(r.done?"":'<button class="btn sm" onclick="doneRepair(\''+r.id+'\')">处理</button>')+'<button class="btn sm gray" onclick="delRepair(\''+r.id+'\')">删</button></div></div>';
+ }
+ document.getElementById("repList").innerHTML=
+  (pend.length?'<div class="sec-h">待处理（'+pend.length+'）</div><div class="card">'+pend.map(card).join("")+"</div>":"")+
+  (done.length?'<div class="sec-h">已处理（'+done.length+'）</div><div class="card">'+done.map(card).join("")+"</div>":"")+
+  (!pend.length&&!done.length?'<div class="card empty">暂无报修记录</div>':"");
+}
+function delRepair(id){if(confirm("删除这条上报？")){D.delRepairs.push({id:id,uts:Date.now()});D.repairs=D.repairs.filter(function(x){return x.id!=id});save();renderRec()}}
+
+/* ================= 数据导入导出 ================= */
+function exportJson(){
+ var blob=new Blob([JSON.stringify(D,null,1)],{type:"application/json"});
+ var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="国护队后勤数据_"+today()+".json";a.click();
+}
+/* 通用合并：把远端/备份的数据合并进本地。
+   规则：记录类按「最后修改时间(uts)」谁新听谁；删除用墓碑列表防止同步复活 */
+function edTs(e){return (e&&e.uts)||0}
+function recTs(r){return (r&&r.uts)||(r&&r.ts)||0}
+function mergeInto(tgt,o){
+ if(!o||typeof o!="object")return;
+ // 物资编辑（数量/位置/状态）：按键比较修改时间
+ ["uniEdits","shoeEdits","hatEdits","gearEdits"].forEach(function(k){
+  for(var x in (o[k]||{})){
+   var nv=o[k][x],lv=tgt[k][x];
+   if(!lv||edTs(nv)>=edTs(lv))tgt[k][x]=nv;
+  }
+ });
+ // 借用/报修记录：按 id 合并取最新版本，再应用墓碑删除
+ function lww(listKey,tombKey){
+  var seen={};(tgt[listKey]||[]).forEach(function(b){seen[b.id]=b});
+  (o[listKey]||[]).forEach(function(nb){
+   var lb=seen[nb.id];
+   if(!lb||recTs(nb)>=recTs(lb))seen[nb.id]=nb;
+  });
+  var tombs={};((tgt[tombKey]||[]).concat(o[tombKey]||[])).forEach(function(t){tombs[t.id]=t.uts||0});
+  tgt[listKey]=Object.keys(seen).map(function(id){
+   var b=seen[id];
+   return (tombs[id]!=null&&tombs[id]>=recTs(b))?null:b;
+  }).filter(Boolean);
+  var ts={};((tgt[tombKey]||[]).concat(o[tombKey]||[])).forEach(function(t){ts[t.id]=t});
+  tgt[tombKey]=Object.values(ts);
+ }
+ lww("borrows","delBorrows");
+ lww("repairs","delRepairs");
+ // 日历：calRemoved 既是种子条目的删除标记，也作为自定义条目的墓碑
+ var tom={};((tgt.calRemoved||[]).concat(o.calRemoved||[])).forEach(function(x){tom[x]=1});tgt.calRemoved=Object.keys(tom);
+ for(var t in (o.calAdded||{})){var m={};((tgt.calAdded[t]||[]).concat(o.calAdded[t]||[])).forEach(function(e){m[e.id]=e});tgt.calAdded[t]=Object.values(m)}
+ for(var t2 in tgt.calAdded){tgt.calAdded[t2]=tgt.calAdded[t2].filter(function(e){return tom[e.id]==null})}
+ // 自定义门类/物品/队服：并集后应用墓碑；物品按修改时间取新
+ var dC={};((tgt.delCats||[]).concat(o.delCats||[])).forEach(function(x){dC[x]=1});
+ var cc={};((tgt.customCats||[]).concat(o.customCats||[])).forEach(function(x){if(!dC[x])cc[x]=1});tgt.customCats=Object.keys(cc);
+ tgt.delCats=Object.keys(dC);
+ var dI={};((tgt.delItems||[]).concat(o.delItems||[])).forEach(function(x){dI[x]=1});
+ var ci={};((tgt.customItems||[]).concat(o.customItems||[])).forEach(function(x){
+  if(dI[x.id])return;
+  var lv=ci[x.id];
+  if(!lv||((x.uts||0)>=((lv&&lv.uts)||0)))ci[x.id]=x;
+ });tgt.customItems=Object.values(ci);
+ tgt.delItems=Object.keys(dI);
+ var cu={};((tgt.customUnis||[]).concat(o.customUnis||[])).forEach(function(x){cu[x.id]=x});tgt.customUnis=Object.values(cu);
+ var du={};((tgt.delUnis||[]).concat(o.delUnis||[])).forEach(function(x){du[x]=1});tgt.delUnis=Object.keys(du);
+ var rr={};((tgt.roster||[]).concat(o.roster||[])).forEach(function(x){rr[x]=1});tgt.roster=Object.keys(rr);
+}
+function importJson(input){
+ var f=input.files[0];if(!f)return;
+ var rd=new FileReader();
+ rd.onload=function(){try{
+  var o=JSON.parse(rd.result);if(!o||typeof o!="object")throw 0;
+  for(var k in DEF)if(o[k]===undefined)o[k]=DEF[k];
+  mergeInto(D,o);
+  save();alert("导入合并成功 ✅");go("v-home");
+ }catch(e){alert("文件格式不对，请选择导出的备份 json 文件")}};
+ rd.readAsText(f);input.value="";
+}
+function copyReport(){
+ var me=ADMIN?null:getMe();
+ var myB=D.borrows.filter(function(b){return !me||b.name==me});
+ var myR=D.repairs.filter(function(r){return !me||r.by==me||!r.by});
+ var lines=["【国护队后勤上报】"+today()+(me?" · "+me:"")];
+ if(myB.length){lines.push("▸ 借用登记：");myB.forEach(function(b){lines.push("· ["+b.cat+"] "+b.name+" 借 "+b.items+"（借出 "+b.out+(b.ret?"，已归还 "+b.retDate:"，未归还")+"）")})}
+ if(myR.length){lines.push("▸ 报修上报：");myR.forEach(function(r){lines.push("· "+r.item+"："+r.desc+(r.done?"（已处理）":""))})}
+ var ne=0;for(var k in D.uniEdits)ne++;for(k in D.shoeEdits)ne++;for(k in D.hatEdits)ne++;for(k in D.gearEdits)ne++;
+ if(ne)lines.push("▸ 物资状态修改："+ne+" 处（请发送备份文件给管理员）");
+ if(lines.length==1){alert("本机暂无新登记内容");return}
+ var txt=lines.join("\n");
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){alert("已复制，去粘贴到群里发给管理员 ✅")},function(){showCopy(txt)})}
+ else showCopy(txt);
+}
+function showCopy(txt){openModal('<h3>上报文本</h3><textarea rows="8" readonly onclick="this.select()">'+esc(txt)+'</textarea><div style="margin-top:12px"><button class="btn blk" onclick="closeModal()">关闭</button></div>')}
+function resetAll(){if(confirm("确定恢复初始数据？所有本机登记和修改都会清除！")){D=JSON.parse(JSON.stringify(DEF));save();go("v-home")}}
+
+/* ================= 人员登录 ================= */
+function getMe(){try{return localStorage.getItem("ghd_me")}catch(e){return null}}
+function setMe(n){try{localStorage.setItem("ghd_me",n)}catch(e){}}
+function renderLogin(){
+ var box=document.getElementById("loginBox"),r=D.roster||[];
+ var html='<div class="card"><h3>🧑 选择 / 输入您的姓名</h3>';
+ if(r.length){
+  html+='<p class="note">在名单里找到自己点一下即可（找不到请让后勤管理员在「数据 → 队员名单」添加）</p><div class="picks" style="max-height:340px">';
+  r.forEach(function(n){html+='<div class="pick" onclick="doLogin(\''+n+'\')"><div class="nm">'+esc(n)+'</div><div class="r" style="color:#ccc">›</div></div>'});
+  html+="</div>";
+ }else{
+  html+='<p class="note">输入您的姓名进入；管理员可在「数据 → 队员名单」预置名单，之后大家点选即可。</p><input id="lgName" placeholder="姓名"><div style="margin-top:10px"><button class="btn blk" onclick="doLogin(document.getElementById(\'lgName\').value.trim())">进入</button></div>';
+ }
+ html+="</div>";
+ box.innerHTML=html;
+}
+function doLogin(n){
+ if(!n){alert("请输入姓名");return}
+ setMe(n);go("v-mborrow");
+}
+function switchMe(){
+ if(confirm("切换身份？")){try{localStorage.removeItem("ghd_me")}catch(e){}go("v-login")}
+}
+/* ---- 名单管理 ---- */
+function addRoster(){
+ var n=document.getElementById("roName").value.trim();
+ if(!n)return;
+ if((D.roster||[]).indexOf(n)>=0){alert("名单里已有这个人");return}
+ D.roster.push(n);save();document.getElementById("roName").value="";renderRoster();
+}
+function delRoster(n){
+ if(!confirm("从名单移除 "+n+"？（其历史记录保留）"))return;
+ D.roster=D.roster.filter(function(x){return x!=n});save();renderRoster();
+}
+function renderRoster(){
+ var el=document.getElementById("rosterList");if(!el)return;
+ var r=D.roster||[];
+ el.innerHTML=r.length?r.map(function(n){return '<div class="row"><div class="l"><div class="t1">'+esc(n)+'</div></div><div class="r"><button class="btn sm gray" onclick="delRoster(\''+n+'\')">移除</button></div></div>'}).join(""):'<div class="empty">名单为空，队员登录时将手动输入姓名</div>';
+}
+
+/* ================= 云同步（支持 LeanCloud / Supabase） ================= */
+function syncCfg(){try{var s=localStorage.getItem("ghd_sync");if(s){var c=JSON.parse(s);return c.off?null:c}return DEF_SYNC}catch(e){return DEF_SYNC}}
+function setSyncCfg(c){try{localStorage.setItem("ghd_sync",JSON.stringify(c||{off:1}))}catch(e){}}
+var syncingNow=false,lastSyncOk=0,syncTimer=null;
+function scheduleSync(){if(!syncCfg())return;if(syncTimer)return;syncTimer=setTimeout(function(){syncTimer=null;syncNow(false)},2500)}
+function cloudPack(){var c=JSON.parse(JSON.stringify(D));delete c.pass;return c}
+function lcHead(cfg){return {"X-LC-Id":cfg.a,"X-LC-Key":cfg.k,"Content-Type":"application/json"}}
+function syncGet(cfg){
+ if(cfg.p=="lc")return fetch(cfg.u+"/1.1/classes/SyncData/"+cfg.o,{headers:lcHead(cfg)}).then(function(r){return r.json()}).then(function(j){if(j.code)throw (j.error||"接口错误 "+j.code);return j.data||{}});
+ return fetch(cfg.u+"/rest/v1/sync_data?id=eq.main",{headers:{"apikey":cfg.k,"Authorization":"Bearer "+cfg.k,"Accept":"application/json"}}).then(function(r){return r.json()}).then(function(j){if(j&&j.message)throw j.message;return (j&&j[0]&&j[0].data)?j[0].data:{}});
+}
+function syncPut(cfg,pack){
+ if(cfg.p=="lc")return fetch(cfg.u+"/1.1/classes/SyncData/"+cfg.o,{method:"PUT",headers:lcHead(cfg),body:JSON.stringify({data:pack})}).then(function(r){return r.json()}).then(function(j){if(j.code)throw (j.error||"接口错误 "+j.code);return j});
+ return fetch(cfg.u+"/rest/v1/sync_data?id=eq.main",{method:"PATCH",headers:{"apikey":cfg.k,"Authorization":"Bearer "+cfg.k,"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify({data:pack})}).then(function(r){if(!r.ok)throw "写入失败("+r.status+")";return r});
+}
+function syncNow(manual){
+ var cfg=syncCfg();
+ if(!cfg){if(manual)alert("尚未开启云同步");return}
+ if(syncingNow){if(manual)alert("上一次同步还在进行中");return}
+ syncingNow=true;renderSyncStat("⟳ 同步中…");
+ syncGet(cfg).then(function(remote){
+  if(remote&&typeof remote=="object"){mergeInto(D,remote);save(true)}
+  return syncPut(cfg,cloudPack());
+ }).then(function(){
+  syncingNow=false;lastSyncOk=Date.now();renderSyncStat("✓ 已同步");
+  if(manual)alert("同步成功 ✅");
+  refreshView();
+ }).catch(function(e){
+  syncingNow=false;renderSyncStat("⚠ 同步失败");
+  if(manual)alert("同步失败："+(typeof e=="string"?e:"网络或配置问题"));
+ });
+}
+function renderSyncStat(txt){
+ var el=document.getElementById("syncStat");if(!el)return;
+ el.textContent=syncCfg()?(txt||"☁️ 云同步已开启"):"";
+}
+function syncInfoHtml(){
+ var cfg=syncCfg();
+ if(!cfg)return {txt:"已退出同步。本文件已内置云端配置，点下方按钮即可重新开启；开启后任何人在任何设备上登记或修改，2 秒内自动同步给所有人。",btns:'<button class="btn" onclick="reOpenSync()">⚙️ 重新开启</button>'};
+ var t=lastSyncOk?new Date(lastSyncOk).toTimeString().slice(0,8):"—";
+ return {txt:"已开启（后端："+(cfg.p=="lc"?"LeanCloud":"Supabase")+"，最近成功同步 "+t+"）。每 25 秒自动同步，修改后立即自动上传。",btns:'<button class="btn" onclick="syncNow(true)">⟳ 立即同步</button><button class="btn sec" onclick="copySyncCode()">📋 复制同步码</button><button class="btn gray" onclick="leaveSync()">退出同步</button>'};
+}
+function renderSyncInfo(){
+ var el=document.getElementById("syncInfo"),bt=document.getElementById("syncBtns");if(!el)return;
+ var i=syncInfoHtml();el.innerHTML=i.txt;bt.innerHTML=i.btns;
+}
+function copySyncCode(){
+ var cfg=syncCfg();if(!cfg)return;
+ var code=btoa(JSON.stringify(cfg));
+ openModal('<h3>📋 同步码</h3><p class="note">把这个同步码发给队员们。他们在任意页面底部点「☁️ 云同步」粘贴一次，即可永久自动同步。</p><textarea rows="4" readonly onclick="this.select()">'+esc(code)+'</textarea><div style="margin-top:12px"><button class="btn blk" onclick="copySyncSel()">复制同步码</button></div>');
+}
+function copySyncSel(){
+ var t=document.querySelector("#mBox textarea");if(!t)return;t.select();
+ try{document.execCommand("copy");alert("已复制 ✅")}catch(e){}
+}
+function joinSyncPrompt(){
+ var v=prompt("请粘贴管理员发给您的同步码");
+ if(!v)return;
+ var cfg=null;
+ try{cfg=JSON.parse(atob(v.trim()))}catch(e){alert("同步码不对，请向管理员完整复制");return}
+ if(!cfg.u||!cfg.a||!cfg.k||!cfg.o){alert("同步码不完整");return}
+ setSyncCfg(cfg);syncNow(true);
+}
+function leaveSync(){
+ if(confirm("退出云同步？本机已保存的数据会保留。")){setSyncCfg(null);renderSyncStat("");renderSyncInfo()}
+}
+function reOpenSync(){try{localStorage.removeItem("ghd_sync")}catch(e){}renderSyncStat("");renderSyncInfo()}
+function openSyncSetup(){
+ openModal('<h3>⚙️ 设置云同步</h3>'+
+ '<p class="note">本文件已<b>内置默认云端配置</b>，正常情况下无需手动设置。仅当需要更换后端时才填：<br>1. supabase.com 创建项目，SQL Editor 运行建表+授权语句；<br>2. 「Project Settings → API Keys」复制 Project URL 和 publishable key 填到下面。</p>'+
+ '<label>选择后端</label><select id="scP" onchange="syncSetupToggle()"><option value="supa">Supabase（推荐）</option><option value="lc">LeanCloud（老账号）</option></select>'+
+ '<div id="scSupa"><label>Project URL</label><input id="scU" placeholder="https://xxxx.supabase.co"></div>'+
+ '<div id="scLc" style="display:none"><label>REST API 服务器地址</label><input id="scU2" placeholder="https://xxxx.global.lncldapi.com"></div>'+
+ '<label>AppID 或 anon key</label><input id="scA" placeholder="Supabase 填 anon public key / LeanCloud 填 AppID">'+
+ '<label>AppKey（仅 LeanCloud 需要，Supabase 留空）</label><input id="scK" placeholder="LeanCloud 的 AppKey">'+
+ '<div class="grid2" style="margin-top:14px"><button class="btn gray" onclick="closeModal()">取消</button><button class="btn" onclick="createSync()">创建云端并开启</button></div>');
+}
+function syncSetupToggle(){
+ var p=document.getElementById("scP").value;
+ document.getElementById("scSupa").style.display=p=="supa"?"block":"none";
+ document.getElementById("scLc").style.display=p=="lc"?"block":"none";
+}
+function createSync(){
+ var p=document.getElementById("scP").value;
+ var cfg={p:p};
+ if(p=="supa"){
+  cfg.u=document.getElementById("scU").value.trim().replace(/\/$/,"");
+  cfg.a=document.getElementById("scA").value.trim();cfg.k=cfg.a;
+  if(!cfg.u||!cfg.a){alert("URL 和 anon key 都要填写");return}
+ }else{
+  cfg.u=document.getElementById("scU2").value.trim().replace(/\/$/,"");
+  cfg.a=document.getElementById("scA").value.trim();cfg.k=document.getElementById("scK").value.trim();
+  if(!cfg.u||!cfg.a||!cfg.k){alert("三项都要填写");return}
+ }
+ renderSyncStat("⟳ 正在创建云端…");
+ var head=p=="lc"?lcHead(cfg):{"apikey":cfg.k,"Authorization":"Bearer "+cfg.k,"Content-Type":"application/json"};
+ var url=p=="lc"?cfg.u+"/1.1/classes/SyncData":cfg.u+"/rest/v1/sync_data";
+ var body=p=="lc"?JSON.stringify({key:"main",data:cloudPack()}):JSON.stringify({id:"main",data:cloudPack()});
+ fetch(url,{method:"POST",headers:head,body:body})
+ .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j}})})
+ .then(function(res){
+  var j=res.j||{};
+  if(p=="supa"&&!res.ok)throw (j.message||"创建失败");
+  if(p=="lc"&&(j.code||!j.objectId))throw (j.error||"创建失败");
+  cfg.o=p=="lc"?j.objectId:"main";
+  if(p=="supa"&&j&&j.message)throw j.message;
+  setSyncCfg(cfg);closeModal();
+  renderSyncStat("✓ 已同步");renderSyncInfo();
+  copySyncCode();
+ }).catch(function(e){
+  renderSyncStat("");alert("创建失败："+(typeof e=="string"?e:"网络或配置问题")+"（若提示已存在，改用「立即同步」即可）");
+ });
+}
+setInterval(function(){if(syncCfg()&&!syncingNow)syncNow(false)},25000);
+
+/* ================= 启动 ================= */
+document.getElementById("headDate").textContent=(function(){var d=new Date();return d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日 · 星期"+"日一二三四五六"[d.getDay()]})();
+renderNav();
+renderSyncStat("");
+go(ADMIN?"v-home":"v-mborrow");
+if(syncCfg())setTimeout(function(){syncNow(false)},300);
+</script>
+</body>
+</html>
